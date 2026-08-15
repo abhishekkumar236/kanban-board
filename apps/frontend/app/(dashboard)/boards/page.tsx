@@ -3,8 +3,8 @@ import React from "react";
 
 function BoardsPage() {
     return (
-        <div className="flex flex-col gap-4">
-            <h1 className="font-semibold text-3xl">Boards</h1>
+        <div className="flex h-full min-h-0 flex-col gap-4">
+            <h1 className="shrink-0 font-semibold text-3xl">Boards</h1>
             <Boards />
         </div>
     );

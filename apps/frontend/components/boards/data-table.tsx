@@ -37,10 +37,12 @@ export function DataTable<TData extends RowData>({
     });
 
     return (
-        <>
-            <div className="overflow-hidden rounded-md border border-neutral-500">
+        // Fills whatever height the parent gives it: the table area flexes and
+        // scrolls, the pagination bar stays pinned at the bottom.
+        <div className="flex h-full min-h-0 flex-col">
+            <div className="min-h-0 flex-1 overflow-hidden rounded-md border border-neutral-500 [&>[data-slot=table-container]]:h-full">
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="sticky top-0 z-10 bg-background">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
@@ -115,7 +117,7 @@ export function DataTable<TData extends RowData>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="flex shrink-0 items-center justify-end space-x-2 py-4">
                 <Button
                     variant="outline"
                     size="sm"
@@ -133,6 +135,6 @@ export function DataTable<TData extends RowData>({
                     Next
                 </Button>
             </div>
-        </>
+        </div>
     );
 }

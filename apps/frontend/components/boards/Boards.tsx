@@ -164,7 +164,7 @@ async function getBoards(): Promise<Boards[]> {
 async function Boards() {
     const boards = await getBoards();
     return (
-        <div className="w-full h-full">
+        <div className="w-full flex-1 min-h-0">
             <BoardsTable data={boards} />
         </div>
     );
