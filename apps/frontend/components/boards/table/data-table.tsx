@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 
 import { features, type DataTableFeatures } from "./data-table-features";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 interface DataTableProps<TData extends RowData> {
     columns: ColumnDef<DataTableFeatures, TData>[];
@@ -23,7 +23,8 @@ interface DataTableProps<TData extends RowData> {
 
 // Clicks landing on something interactive inside a cell belong to that control,
 // not to the row.
-const INTERACTIVE = "a, button, input, select, textarea, label, [role=checkbox]";
+const INTERACTIVE =
+    "a, button, input, select, textarea, label, [role=checkbox]";
 
 export function DataTable<TData extends RowData>({
     columns,
@@ -68,7 +69,9 @@ export function DataTable<TData extends RowData>({
                                         row.getIsSelected() && "selected"
                                     }
                                     className={
-                                        onRowClick ? "cursor-pointer" : undefined
+                                        onRowClick
+                                            ? "cursor-pointer"
+                                            : undefined
                                     }
                                     tabIndex={onRowClick ? 0 : undefined}
                                     onClick={

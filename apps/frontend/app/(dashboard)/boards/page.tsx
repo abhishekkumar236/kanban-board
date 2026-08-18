@@ -1,4 +1,4 @@
-import Boards from "@/components/boards/Boards";
+import Boards from "@/components/boards/table/Boards";
 import React from "react";
 
 function BoardsPage() {
