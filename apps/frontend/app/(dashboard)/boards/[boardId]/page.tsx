@@ -1,8 +1,4 @@
-"use client";
-import { useParams } from "next/navigation";
-import React, { useState } from "react";
-import { useDraggable, useDroppable, DragDropProvider } from "@dnd-kit/react";
-import { cn } from "@/lib/utils";
+import TaskBoard from "@/components/boards/taskBoard/Board";
 
 export type Status = "inProgress" | "pending" | "completed";
 
@@ -91,110 +87,14 @@ const columns: IColumns = [
     { id: "3", title: "completed" },
 ];
 
-function Board() {
-    const { boardId } = useParams<{ boardId: string }>();
-    const [tasks, setTasks] = useState<ITasks>(initialTasks);
+async function Board({ params }: { params: { boardId: string } }) {
+    const { boardId } = await params;
     return (
-        <DragDropProvider
-            onDragEnd={(event) => {
-                // The drag was aborted (Escape, or the pointer never moved).
-                if (event.canceled) return;
-
-                const { source, target } = event.operation;
-                // Dropped outside of any column — nothing to do.
-                if (!source || !target) return;
-
-                const status = target.data?.status as Status | undefined;
-                if (!status) return;
-
-                // dnd-kit does not move anything on its own: the card only
-                // lands in a new column because this state change re-renders it
-                // there.
-                setTasks((current) =>
-                    current.map((task) =>
-                        task.id === source.id ? { ...task, status } : task,
-                    ),
-                );
-            }}
-        >
-            <div className="flex h-full w-full flex-col gap-6 p-6">
-                <h1 className="text-2xl font-semibold">{boardId}</h1>
-
-                <div className="grid flex-1 grid-cols-3 gap-4">
-                    {columns.map((column) => {
-                        const columnTasks = tasks.filter(
-                            (task) => task.status === column.title,
-                        );
-
-                        return (
-                            <Column
-                                column={column}
-                                columnTasks={columnTasks}
-                                key={column.id}
-                            />
-                        );
-                    })}
-                </div>
-            </div>
-        </DragDropProvider>
-    );
-}
-
-function Task({ task }: { task: ITask }) {
-    const { ref } = useDraggable({
-        id: task.id,
-    });
-    return (
-        <div
-            className="rounded-lg border bg-background p-4 shadow-sm"
-            ref={ref}
-        >
-            <h3 className="font-medium">{task.title}</h3>
-
-            <p className="mt-1 text-sm text-muted-foreground">
-                {task.description}
-            </p>
-        </div>
-    );
-}
-
-function Column({
-    column,
-    columnTasks,
-}: {
-    column: IColumn;
-    columnTasks: ITasks;
-}) {
-    const { ref, isDropTarget } = useDroppable({
-        // `data` travels with the droppable and comes back in onDragEnd, so the
-        // handler never has to look the column up by id.
-        id: column.id,
-        data: { status: column.title },
-    });
-    return (
-        <div
-            ref={ref}
-            className={cn(
-                "flex flex-col rounded-lg bg-muted/50 p-4 transition-colors",
-                isDropTarget && "bg-muted ring-2 ring-primary",
-            )}
-        >
-            {/* Column header */}
-            <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-semibold">{column.title}</h2>
-
-                <span className="rounded-md bg-background px-2 py-1 text-sm text-muted-foreground">
-                    {columnTasks.length}
-                </span>
-            </div>
-
-            {/* Tasks */}
-            <div className="flex min-h-24 flex-1 flex-col gap-3">
-                {columnTasks.map((task) => (
-                    <Task task={task} key={task.id} />
-                ))}
-            </div>
-        </div>
+        <TaskBoard
+            initialTasks={initialTasks}
+            boardId={boardId}
+            columns={columns}
+        />
     );
 }
 
