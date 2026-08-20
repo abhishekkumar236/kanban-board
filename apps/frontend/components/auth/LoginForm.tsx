@@ -19,10 +19,9 @@ function LoginForm() {
 
     const onSubmitHandler = (data: loginSchemaType) => console.log(data);
     return (
-        <div className="flex flex-col gap-6 justify-center items-center border border-neutral-500 p-4 rounded-md w-[45%] md:w-[50%] :w-[70%] shadow-xl/40 shadow-red-800">
-            <span className="font-semibold text-2xl w-full text-center">
-                Create new account
-            </span>
+        <div className="flex flex-col gap-4 justify-center items-center rounded-md border border-foreground/30 p-4 text-background w-[60%]">
+            <h1 className="text-left font-bold text-lg w-full">Boardio</h1>
+            <h2 className="font-bold text-3xl w-full text-left">Log in</h2>
             <form
                 className="flex flex-col gap-4 w-full"
                 onSubmit={handleSubmit(onSubmitHandler)}
@@ -34,11 +33,13 @@ function LoginForm() {
                     <input
                         type="email"
                         id="email"
-                        className="border border-neutral-500 rounded-md outline-none p-2"
+                        className="rounded-md p-2 bg-white shadow-md/10 outline-none"
                         {...register("email")}
                     />
                     {errors.email?.message && (
-                        <p className="text-red-500">{errors.email?.message}</p>
+                        <p className="text-sm text-destructive">
+                            {errors.email?.message}
+                        </p>
                     )}
                 </div>
                 <div className="flex flex-col gap-2">
@@ -48,22 +49,26 @@ function LoginForm() {
                     <input
                         type="password"
                         id="password"
-                        className="border border-neutral-500 rounded-md outline-none p-2"
+                        className="rounded-md p-2 bg-white shadow-md/10 outline-none"
                         {...register("password")}
                     />
                     {errors.password?.message && (
-                        <p className="text-red-500">
+                        <p className="text-sm text-destructive">
                             {errors.password?.message}
                         </p>
                     )}
                 </div>
                 <button
-                    className="w-full bg-red-800 p-2 rounded-md font-semibold text-lg"
+                    className="w-full rounded-md bg-primary p-2 font-semibold text-lg text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring/50"
                     type="submit"
                 >
-                    Sign Up
+                    Log In
                 </button>
             </form>
+            <div className="text-sm">
+                Don't have an account?{" "}
+                <button className="text-primary cursor-pointer">Sign Up</button>
+            </div>
         </div>
     );
 }

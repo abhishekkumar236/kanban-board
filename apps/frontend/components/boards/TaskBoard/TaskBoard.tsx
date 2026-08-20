@@ -1,13 +1,9 @@
 "use client";
 
-import {
-    IColumns,
-    ITasks,
-    Status,
-} from "@/app/(dashboard)/boards/[boardId]/page";
+import type { IColumns, ITasks, Status } from "@/components/boards/types";
 import { DragDropProvider } from "@dnd-kit/react";
 import { useState } from "react";
-import Column from "../column/Column";
+import Column from "@/components/boards/Column/Column";
 
 function TaskBoard({
     initialTasks,

@@ -1,15 +1,18 @@
-"use client";
-import { ITask } from "@/app/(dashboard)/boards/[boardId]/page";
+import type { ITask } from "@/components/boards/types";
+import { cn } from "@/lib/utils";
 import { useDraggable } from "@dnd-kit/react";
 
 function Task({ task }: { task: ITask }) {
-    const { ref } = useDraggable({
+    const { ref, isDragging } = useDraggable({
         id: task.id,
     });
     return (
         <div
-            className="rounded-lg border bg-background p-4 shadow-sm"
             ref={ref}
+            className={cn(
+                "rounded-lg border border-border bg-card p-4 text-card-foreground shadow-sm",
+                isDragging ? "cursor-grabbing opacity-50" : "cursor-grab",
+            )}
         >
             <h3 className="font-medium">{task.title}</h3>
 

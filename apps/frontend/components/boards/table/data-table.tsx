@@ -41,9 +41,9 @@ export function DataTable<TData extends RowData>({
         // Fills whatever height the parent gives it: the table area flexes and
         // scrolls, the pagination bar stays pinned at the bottom.
         <div className="flex h-full min-h-0 flex-col">
-            <div className="min-h-0 flex-1 overflow-hidden rounded-md border border-neutral-500 [&>[data-slot=table-container]]:h-full">
+            <div className="min-h-0 flex-1 overflow-hidden rounded-md border border-border bg-card [&>[data-slot=table-container]]:h-full">
                 <Table>
-                    <TableHeader className="sticky top-0 z-10 bg-background">
+                    <TableHeader className="sticky top-0 z-10 bg-card">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {

@@ -3,8 +3,9 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar/Navbar";
 import { cn } from "@/lib/utils";
+import Provider from "@/providers/Provider";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -25,9 +26,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     return (
         <html
             lang="en"
-            className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
+            // next-themes' script sets `class="dark"` and `color-scheme` on this
+            // element before React hydrates, so the server and client markup are
+            // meant to differ here.
+            suppressHydrationWarning
+            className={cn(
+                "h-full",
+                "antialiased",
+                geistSans.variable,
+                geistMono.variable,
+                "font-sans",
+                inter.variable,
+            )}
         >
-            <body className="h-screen min-h-full w-full">{children}</body>
+            <body className="h-screen min-h-full w-full">
+                <Provider>{children}</Provider>
+            </body>
         </html>
     );
 }
