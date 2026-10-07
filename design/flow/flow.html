@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear-lite User Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+</style>
+<style>
+  .screen{position:relative;width:1440px;height:900px;overflow:hidden;flex-shrink:0}
+  @media (max-width:1560px){.screen-zoom{zoom:.8}}
+  @media (max-width:1240px){.screen-zoom{zoom:.6}}
+</style>
+</head>
+<body class="bg-zinc-100 font-sans text-zinc-900 antialiased">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="st-backlog" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.4 2"/></symbol>
+  <symbol id="st-todo" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="st-progress" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 3.5a3.5 3.5 0 0 1 0 7z" fill="currentColor"/></symbol>
+  <symbol id="st-review" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 3.5a3.5 3.5 0 1 1-3.5 3.5H7z" fill="currentColor"/></symbol>
+  <symbol id="st-done" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="currentColor"/><path d="M4.3 7.3l1.9 1.8 3.6-3.9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="pr-urgent" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="3" fill="currentColor"/><path d="M7 3.8v4" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><circle cx="7" cy="10.2" r="1" fill="#fff"/></symbol>
+  <symbol id="pr-high" viewBox="0 0 14 14"><g fill="currentColor"><rect x="1.5" y="8" width="2.6" height="4.5" rx=".8"/><rect x="5.7" y="5" width="2.6" height="7.5" rx=".8"/><rect x="9.9" y="2" width="2.6" height="10.5" rx=".8"/></g></symbol>
+  <symbol id="pr-medium" viewBox="0 0 14 14"><g fill="currentColor"><rect x="1.5" y="8" width="2.6" height="4.5" rx=".8"/><rect x="5.7" y="5" width="2.6" height="7.5" rx=".8"/><rect x="9.9" y="2" width="2.6" height="10.5" rx=".8" fill-opacity=".25"/></g></symbol>
+  <symbol id="pr-low" viewBox="0 0 14 14"><g fill="currentColor"><rect x="1.5" y="8" width="2.6" height="4.5" rx=".8"/><rect x="5.7" y="5" width="2.6" height="7.5" rx=".8" fill-opacity=".25"/><rect x="9.9" y="2" width="2.6" height="10.5" rx=".8" fill-opacity=".25"/></g></symbol>
+  <symbol id="pr-none" viewBox="0 0 14 14"><g fill="currentColor"><rect x="1.5" y="6.3" width="2.6" height="1.4" rx=".7"/><rect x="5.7" y="6.3" width="2.6" height="1.4" rx=".7"/><rect x="9.9" y="6.3" width="2.6" height="1.4" rx=".7"/></g></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></g></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></g></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M10 18h4"/></g></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><g fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></g></symbol>
+  <symbol id="i-comment" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></g></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></g></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></g></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18.5 20a6.5 6.5 0 0 0-2.5-5.1"/></g></symbol>
+  <symbol id="i-user-plus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M19 8v6M16 11h6"/></g></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></g></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></g></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 7v7M12 7v4M16 7v9"/></g></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></g></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></g></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></g></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></g></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 17v4M17 19h4"/></g></symbol>
+  <symbol id="i-loader" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></g></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></g></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></g></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 18h4M12 18h8"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="18" r="2"/></g></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></g></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></g></symbol>
+  <symbol id="i-enter" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 10-5 5 5 5"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></g></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></g></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></g></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.8-9.8M17 6l3 3M15 8l2 2"/></g></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></g></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></g></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></g></symbol>
+  <symbol id="i-keyboard" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9h.01M10 9h.01M14 9h.01M18 9h.01M7 15h10"/></g></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></g></symbol>
+  <symbol id="i-command" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></g></symbol>
+</svg>
+
+<template id="tpl-brand">
+  <div data-layer="Brand panel" class="flex h-full w-[600px] shrink-0 flex-col justify-between bg-zinc-950 p-12 text-white">
+    <div class="flex items-center gap-2.5">
+      <span class="grid size-8 place-items-center rounded-lg bg-indigo-500 text-xs font-bold">LL</span>
+      <span class="text-lg font-semibold">Linear-lite</span>
+    </div>
+    <div>
+      <h2 class="text-[32px] font-semibold leading-tight tracking-tight">Plan, track and ship.<br>Together, in real time.</h2>
+      <p class="mt-3 max-w-[440px] text-[15px] leading-relaxed text-zinc-400">An issue tracker for small teams. Every change shows up on everyone's screen the moment it happens.</p>
+      <div data-layer="Board preview" class="mt-10 flex gap-3">
+        <div class="w-[156px] space-y-2 rounded-xl bg-zinc-900 p-2 ring-1 ring-white/10">
+          <div class="flex items-center gap-1.5 px-1 pt-0.5 text-[11px] text-zinc-400"><svg class="size-3 text-zinc-500"><use href="#st-todo"/></svg>Todo</div>
+          <div class="space-y-1.5 rounded-lg bg-zinc-800 p-2.5"><div class="h-1.5 w-4/5 rounded-full bg-zinc-600"></div><div class="h-1.5 w-1/2 rounded-full bg-zinc-700"></div><div class="flex items-center justify-between pt-1"><span class="h-3 w-9 rounded-full bg-zinc-700"></span><span class="size-4 rounded-full bg-amber-500"></span></div></div>
+          <div class="space-y-1.5 rounded-lg bg-zinc-800 p-2.5"><div class="h-1.5 w-3/5 rounded-full bg-zinc-600"></div><div class="h-1.5 w-2/3 rounded-full bg-zinc-700"></div><div class="flex items-center justify-between pt-1"><span class="h-3 w-7 rounded-full bg-zinc-700"></span><span class="size-4 rounded-full bg-rose-500"></span></div></div>
+        </div>
+        <div class="w-[156px] space-y-2 rounded-xl bg-zinc-900 p-2 ring-1 ring-white/10">
+          <div class="flex items-center gap-1.5 px-1 pt-0.5 text-[11px] text-zinc-400"><svg class="size-3 text-amber-500"><use href="#st-progress"/></svg>In Progress</div>
+          <div class="space-y-1.5 rounded-lg bg-zinc-800 p-2.5 ring-2 ring-indigo-500"><div class="h-1.5 w-4/5 rounded-full bg-zinc-500"></div><div class="h-1.5 w-2/5 rounded-full bg-zinc-600"></div><div class="flex items-center justify-between pt-1"><span class="h-3 w-9 rounded-full bg-indigo-500/40"></span><span class="size-4 rounded-full bg-indigo-500"></span></div></div>
+          <div class="space-y-1.5 rounded-lg bg-zinc-800 p-2.5"><div class="h-1.5 w-2/3 rounded-full bg-zinc-600"></div><div class="h-1.5 w-1/2 rounded-full bg-zinc-700"></div><div class="flex items-center justify-between pt-1"><span class="h-3 w-8 rounded-full bg-zinc-700"></span><span class="size-4 rounded-full bg-emerald-600"></span></div></div>
+        </div>
+        <div class="w-[156px] space-y-2 rounded-xl bg-zinc-900 p-2 ring-1 ring-white/10">
+          <div class="flex items-center gap-1.5 px-1 pt-0.5 text-[11px] text-zinc-400"><svg class="size-3 text-emerald-500"><use href="#st-done"/></svg>Done</div>
+          <div class="space-y-1.5 rounded-lg bg-zinc-800 p-2.5"><div class="h-1.5 w-3/4 rounded-full bg-zinc-700"></div><div class="h-1.5 w-1/3 rounded-full bg-zinc-700"></div><div class="flex items-center justify-between pt-1"><span class="h-3 w-6 rounded-full bg-zinc-700"></span><span class="size-4 rounded-full bg-indigo-500"></span></div></div>
+        </div>
+      </div>
+    </div>
+    <ul class="space-y-3 text-sm text-zinc-300">
+      <li class="flex items-center gap-3"><span class="grid size-7 place-items-center rounded-md bg-white/5 ring-1 ring-white/10"><svg class="size-3.5 text-indigo-400"><use href="#i-zap"/></svg></span>Live updates: see teammates' changes instantly</li>
+      <li class="flex items-center gap-3"><span class="grid size-7 place-items-center rounded-md bg-white/5 ring-1 ring-white/10"><svg class="size-3.5 text-indigo-400"><use href="#i-command"/></svg></span>Keyboard-first: ⌘K reaches everything</li>
+      <li class="flex items-center gap-3"><span class="grid size-7 place-items-center rounded-md bg-white/5 ring-1 ring-white/10"><svg class="size-3.5 text-indigo-400"><use href="#i-users"/></svg></span>Free for teams of up to 10 people</li>
+    </ul>
+  </div>
+</template>
+
+<template id="tpl-onb-top">
+  <header data-layer="Top bar" class="flex h-16 shrink-0 items-center justify-between border-b border-zinc-200 px-8">
+    <div class="flex items-center gap-2.5"><span class="grid size-7 place-items-center rounded-lg bg-indigo-600 text-[11px] font-bold text-white">LL</span><span class="font-semibold">Linear-lite</span></div>
+    <p class="text-sm text-zinc-500">Signed in as <span class="font-medium text-zinc-800">aarav@acme.dev</span> · <a class="text-zinc-600 underline">Log out</a></p>
+  </header>
+</template>
+
+<template id="tpl-sidebar">
+  <aside data-layer="Sidebar" class="flex h-full w-56 shrink-0 flex-col border-r border-zinc-200 bg-zinc-50">
+    <div class="px-2 pt-3">
+      <div class="flex items-center gap-2 rounded-md px-2 py-1.5">
+        <span class="grid size-5 place-items-center rounded bg-indigo-600 text-[10px] font-bold text-white">A</span>
+        <span class="text-sm font-semibold">Acme</span>
+        <svg class="size-3.5 text-zinc-400"><use href="#i-chevron-down"/></svg>
+      </div>
+    </div>
+    <div class="px-3 pt-2">
+      <div data-layer="Search" class="flex items-center gap-2 rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-sm text-zinc-500">
+        <svg class="size-4"><use href="#i-search"/></svg>Search
+        <kbd class="ml-auto rounded border border-zinc-200 bg-zinc-50 px-1.5 font-mono text-[10px] text-zinc-500">⌘K</kbd>
+      </div>
+    </div>
+    <nav class="mt-3 space-y-0.5 px-2 text-sm">
+      <a data-nav="inbox" class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-600"><svg class="size-4 text-zinc-500"><use href="#i-inbox"/></svg>Inbox<span class="ml-auto rounded-full bg-indigo-600 px-1.5 text-[10px] font-semibold leading-4 text-white">3</span></a>
+      <a data-nav="my-issues" class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-600"><svg class="size-4 text-zinc-500"><use href="#i-user"/></svg>My issues</a>
+    </nav>
+    <p class="mt-5 px-4 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Your teams</p>
+    <div class="mt-1 px-2 text-sm">
+      <div class="flex items-center gap-2 rounded-md px-2 py-1.5 font-medium text-zinc-800">
+        <span class="grid size-5 place-items-center rounded bg-emerald-500 text-[10px] font-semibold text-white">W</span>Web Team
+        <svg class="ml-auto size-3.5 text-zinc-400"><use href="#i-chevron-down"/></svg>
+      </div>
+      <div class="ml-4 mt-0.5 space-y-0.5 border-l border-zinc-200 pl-2">
+        <a data-nav="board" class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-600"><svg class="size-4 text-zinc-500"><use href="#i-board"/></svg>Board</a>
+        <a data-nav="all" class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-600"><svg class="size-4 text-zinc-500"><use href="#i-layers"/></svg>All issues</a>
+        <a data-nav="team-members" class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-600"><svg class="size-4 text-zinc-500"><use href="#i-users"/></svg>Members</a>
+      </div>
+    </div>
+    <p class="mt-5 px-4 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Projects</p>
+    <nav class="mt-1 space-y-0.5 px-2 text-sm text-zinc-600">
+      <a class="flex items-center gap-2.5 rounded-md px-2 py-1.5"><span class="size-2 rounded-sm bg-violet-500"></span>Linear-lite v1</a>
+      <a class="flex items-center gap-2.5 rounded-md px-2 py-1.5"><span class="size-2 rounded-sm bg-sky-500"></span>Marketing site</a>
+    </nav>
+    <div class="mt-auto">
+      <div data-slot="getting-started" data-layer="Getting started" class="mx-3 mb-3 hidden rounded-lg border border-zinc-200 bg-white p-3">
+        <div class="flex items-center justify-between"><p class="text-xs font-semibold">Getting started</p><span class="text-[11px] text-zinc-500">3 of 5</span></div>
+        <div class="mt-2 h-1 rounded-full bg-zinc-100"><div class="h-1 w-3/5 rounded-full bg-indigo-600"></div></div>
+        <ul class="mt-3 space-y-1.5 text-xs">
+          <li class="flex items-center gap-2 text-zinc-400 line-through"><svg class="size-3.5 text-emerald-500"><use href="#st-done"/></svg>Create a workspace</li>
+          <li class="flex items-center gap-2 text-zinc-400 line-through"><svg class="size-3.5 text-emerald-500"><use href="#st-done"/></svg>Create a team</li>
+          <li class="flex items-center gap-2 text-zinc-400 line-through"><svg class="size-3.5 text-emerald-500"><use href="#st-done"/></svg>Invite teammates</li>
+          <li class="flex items-center gap-2 font-medium text-zinc-800"><svg class="size-3.5 text-zinc-400"><use href="#st-todo"/></svg>Create your first issue</li>
+          <li class="flex items-center gap-2 text-zinc-600"><svg class="size-3.5 text-zinc-400"><use href="#st-todo"/></svg>Open the command palette</li>
+        </ul>
+      </div>
+      <div class="px-2 pb-2"><a data-nav="settings" class="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-zinc-600"><svg class="size-4 text-zinc-500"><use href="#i-settings"/></svg>Settings</a></div>
+      <div data-layer="Account" class="flex items-center gap-2.5 border-t border-zinc-200 px-4 py-3">
+        <span class="grid size-7 place-items-center rounded-full bg-indigo-500 text-[11px] font-semibold text-white">AK</span>
+        <div class="leading-tight"><p class="text-sm font-medium">Aarav Kapoor</p><p class="text-xs text-zinc-500">aarav@acme.dev</p></div>
+        <svg class="ml-auto size-3.5 text-zinc-400"><use href="#i-chevron-down"/></svg>
+      </div>
+    </div>
+  </aside>
+</template>
+
+<template id="tpl-empty-main">
+  <main data-layer="Main" class="relative flex min-w-0 flex-1 flex-col">
+    <header class="flex h-12 shrink-0 items-center gap-3 border-b border-zinc-200 px-4">
+      <nav class="flex items-center gap-1.5 text-sm"><span class="text-zinc-500">Web Team</span><svg class="size-3.5 text-zinc-400"><use href="#i-chevron-right"/></svg><span class="font-medium">Board</span></nav>
+      <div class="ml-auto flex items-center gap-3">
+        <span class="grid size-8 place-items-center rounded-md text-zinc-500"><svg class="size-4"><use href="#i-bell"/></svg></span>
+        <span data-layer="Button New issue" class="inline-flex h-8 items-center gap-1.5 rounded-md bg-indigo-600 px-3 text-sm font-medium text-white shadow-sm"><svg class="size-4"><use href="#i-plus"/></svg>New issue<kbd class="ml-1 rounded bg-indigo-500 px-1 font-mono text-[10px]">C</kbd></span>
+      </div>
+    </header>
+    <div data-layer="Toolbar" class="flex h-11 shrink-0 items-center gap-2 border-b border-zinc-200 px-4">
+      <div class="inline-flex rounded-md border border-zinc-200 bg-zinc-50 p-0.5 text-xs">
+        <span class="inline-flex items-center gap-1.5 rounded bg-white px-2 py-1 font-medium shadow-xs"><svg class="size-3.5"><use href="#i-board"/></svg>Board</span>
+        <span class="inline-flex items-center gap-1.5 rounded px-2 py-1 text-zinc-500"><svg class="size-3.5"><use href="#i-list"/></svg>List</span>
+      </div>
+      <span class="mx-1 h-5 w-px bg-zinc-200"></span>
+      <span class="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs text-zinc-600"><svg class="size-3.5"><use href="#i-filter"/></svg>Filter</span>
+      <div class="ml-auto flex items-center gap-2">
+        <span class="flex h-7 w-56 items-center gap-2 rounded-md border border-zinc-200 px-2 text-xs text-zinc-400"><svg class="size-3.5"><use href="#i-search"/></svg>Search issues…</span>
+        <span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-600"><svg class="size-3.5"><use href="#i-sliders"/></svg>Display</span>
+      </div>
+    </div>
+    <div data-layer="Board" class="flex flex-1 gap-3 overflow-hidden p-4">
+      <section data-layer="Column Backlog" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70"><header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-zinc-400"><use href="#st-backlog"/></svg><h3 class="text-sm font-medium">Backlog</h3><span class="text-xs text-zinc-400">0</span><span class="ml-auto grid size-6 place-items-center rounded text-zinc-400"><svg class="size-4"><use href="#i-plus"/></svg></span></header></section>
+      <section data-layer="Column Todo" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70"><header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg><h3 class="text-sm font-medium">Todo</h3><span class="text-xs text-zinc-400">0</span><span class="ml-auto grid size-6 place-items-center rounded text-zinc-400"><svg class="size-4"><use href="#i-plus"/></svg></span></header></section>
+      <section data-layer="Column In Progress" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70"><header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg><h3 class="text-sm font-medium">In Progress</h3><span class="text-xs text-zinc-400">0</span><span class="ml-auto grid size-6 place-items-center rounded text-zinc-400"><svg class="size-4"><use href="#i-plus"/></svg></span></header></section>
+      <section data-layer="Column In Review" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70"><header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-blue-500"><use href="#st-review"/></svg><h3 class="text-sm font-medium">In Review</h3><span class="text-xs text-zinc-400">0</span><span class="ml-auto grid size-6 place-items-center rounded text-zinc-400"><svg class="size-4"><use href="#i-plus"/></svg></span></header></section>
+      <section data-layer="Column Done" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70"><header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-emerald-500"><use href="#st-done"/></svg><h3 class="text-sm font-medium">Done</h3><span class="text-xs text-zinc-400">0</span></header></section>
+    </div>
+    <div data-layer="Empty state" class="absolute left-1/2 top-[260px] w-[420px] -translate-x-1/2 rounded-xl border border-zinc-200 bg-white p-8 text-center shadow-xl">
+      <span class="mx-auto grid size-12 place-items-center rounded-xl bg-indigo-50 text-indigo-600"><svg class="size-6"><use href="#i-board"/></svg></span>
+      <h2 class="mt-4 text-lg font-semibold">No issues yet</h2>
+      <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">Issues are tasks, bugs or ideas. Create one and it will show up in Todo.</p>
+      <span data-layer="Button Create issue" class="mt-6 inline-flex h-9 items-center gap-2 rounded-md bg-indigo-600 px-4 text-sm font-medium text-white shadow-sm"><svg class="size-4"><use href="#i-plus"/></svg>Create issue</span>
+      <p class="mt-4 text-xs text-zinc-400">Tip: press C anywhere to create an issue</p>
+    </div>
+  </main>
+</template>
+
+<template id="tpl-board-main">
+  <main data-layer="Main" class="relative flex min-w-0 flex-1 flex-col">
+    <header class="flex h-12 shrink-0 items-center gap-3 border-b border-zinc-200 px-4">
+      <nav class="flex items-center gap-1.5 text-sm"><span class="text-zinc-500">Web Team</span><svg class="size-3.5 text-zinc-400"><use href="#i-chevron-right"/></svg><span class="font-medium">Board</span></nav>
+      <div class="ml-auto flex items-center gap-3">
+        <div data-layer="Presence" class="flex items-center gap-2">
+          <div class="flex -space-x-1.5">
+            <span class="relative grid size-6 place-items-center rounded-full bg-rose-500 text-[10px] font-semibold text-white ring-2 ring-white">PR<span class="absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-emerald-500 ring-2 ring-white"></span></span>
+            <span class="relative grid size-6 place-items-center rounded-full bg-emerald-600 text-[10px] font-semibold text-white ring-2 ring-white">RJ<span class="absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-emerald-500 ring-2 ring-white"></span></span>
+          </div>
+          <span class="text-xs text-zinc-500">2 others viewing</span>
+        </div>
+        <span class="grid size-8 place-items-center rounded-md text-zinc-500"><svg class="size-4"><use href="#i-bell"/></svg></span>
+        <span data-layer="Button New issue" class="inline-flex h-8 items-center gap-1.5 rounded-md bg-indigo-600 px-3 text-sm font-medium text-white shadow-sm"><svg class="size-4"><use href="#i-plus"/></svg>New issue<kbd class="ml-1 rounded bg-indigo-500 px-1 font-mono text-[10px]">C</kbd></span>
+      </div>
+    </header>
+    <div data-layer="Toolbar" class="flex h-11 shrink-0 items-center gap-2 border-b border-zinc-200 px-4">
+      <div class="inline-flex rounded-md border border-zinc-200 bg-zinc-50 p-0.5 text-xs">
+        <span class="inline-flex items-center gap-1.5 rounded bg-white px-2 py-1 font-medium shadow-xs"><svg class="size-3.5"><use href="#i-board"/></svg>Board</span>
+        <span class="inline-flex items-center gap-1.5 rounded px-2 py-1 text-zinc-500"><svg class="size-3.5"><use href="#i-list"/></svg>List</span>
+      </div>
+      <span class="mx-1 h-5 w-px bg-zinc-200"></span>
+      <span class="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs text-zinc-600"><svg class="size-3.5"><use href="#i-filter"/></svg>Filter</span>
+      <span data-layer="Filter chip" class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 bg-white pl-2 pr-1 text-xs">
+        <span class="text-zinc-500">Project is</span><span class="size-2 rounded-sm bg-violet-500"></span><span class="font-medium">Linear-lite v1</span>
+        <span class="grid size-5 place-items-center rounded text-zinc-400"><svg class="size-3"><use href="#i-x"/></svg></span>
+      </span>
+      <div class="ml-auto flex items-center gap-2">
+        <span class="flex h-7 w-56 items-center gap-2 rounded-md border border-zinc-200 px-2 text-xs text-zinc-400"><svg class="size-3.5"><use href="#i-search"/></svg>Search issues…</span>
+        <span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-600"><svg class="size-3.5"><use href="#i-sliders"/></svg>Display</span>
+      </div>
+    </div>
+    <div data-layer="Board" class="flex flex-1 gap-3 overflow-hidden p-4">
+      <section data-layer="Column Backlog" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+        <header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-zinc-400"><use href="#st-backlog"/></svg><h3 class="text-sm font-medium">Backlog</h3><span class="text-xs text-zinc-400">4</span><span class="ml-auto grid size-6 place-items-center rounded text-zinc-400"><svg class="size-4"><use href="#i-plus"/></svg></span></header>
+        <div class="flex flex-col gap-2 px-2 pb-2">
+          <article data-layer="Card WEB-21" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-21</span><span class="size-5 rounded-full border border-dashed border-zinc-300"></span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Command palette (⌘K) for quick navigation</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-low"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span></div>
+          </article>
+          <article data-layer="Card WEB-22" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-22</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Respect the system dark mode setting</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-400"><svg class="size-3"><use href="#pr-none"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span></div>
+          </article>
+          <article data-layer="Card WEB-24" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-24</span><span class="size-5 rounded-full border border-dashed border-zinc-300"></span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Keyboard shortcuts to change status (1–5)</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span><span class="ml-auto inline-flex items-center gap-0.5 text-[11px] text-zinc-400"><svg class="size-3"><use href="#i-comment"/></svg>1</span></div>
+          </article>
+          <article data-layer="Card WEB-25" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-25</span><span class="size-5 rounded-full border border-dashed border-zinc-300"></span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Summarize long comment threads with AI</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-low"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-fuchsia-500"></span>AI</span></div>
+          </article>
+        </div>
+      </section>
+      <section data-layer="Column Todo" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+        <header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg><h3 class="text-sm font-medium">Todo</h3><span class="text-xs text-zinc-400">2</span><span class="ml-auto grid size-6 place-items-center rounded text-zinc-400"><svg class="size-4"><use href="#i-plus"/></svg></span></header>
+        <div class="flex flex-col gap-2 px-2 pb-2">
+          <article data-layer="Card WEB-17" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-17</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Validate the new-issue form with zod</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span><span class="ml-auto inline-flex items-center gap-0.5 text-[11px] text-zinc-400"><svg class="size-3"><use href="#i-calendar"/></svg>Oct 16</span></div>
+          </article>
+          <article data-layer="Card WEB-18" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-18</span><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Roll a card back if its move fails to save</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span><span class="ml-auto inline-flex items-center gap-0.5 text-[11px] text-zinc-400"><svg class="size-3"><use href="#i-comment"/></svg>3</span></div>
+          </article>
+        </div>
+      </section>
+      <section data-layer="Column In Progress" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+        <header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg><h3 class="text-sm font-medium">In Progress</h3><span class="text-xs text-zinc-400">3</span><span class="ml-auto grid size-6 place-items-center rounded text-zinc-400"><svg class="size-4"><use href="#i-plus"/></svg></span></header>
+        <div class="flex flex-col gap-2 px-2 pb-2">
+          <article data-layer="Card WEB-12" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-12</span><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Drag and drop cards between columns</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-orange-500"><svg class="size-3"><use href="#pr-urgent"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span><span class="ml-auto flex items-center gap-2 text-[11px] text-zinc-400"><span class="inline-flex items-center gap-0.5"><svg class="size-3"><use href="#i-comment"/></svg>4</span><span class="inline-flex items-center gap-0.5 text-amber-600"><svg class="size-3"><use href="#i-calendar"/></svg>Oct 9</span></span></div>
+          </article>
+          <div data-slot="drop-slot" data-layer="Drop slot" class="hidden h-[104px] rounded-lg border-2 border-dashed border-indigo-300 bg-indigo-50"></div>
+          <article data-layer="Card WEB-16 saving" class="rounded-lg border border-zinc-200 bg-white p-3">
+            <div class="opacity-60">
+              <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-16</span><span class="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-500"><svg class="size-3"><use href="#i-loader"/></svg>Saving…</span></div>
+              <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Optimistic update when a card moves</p>
+              <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span></div>
+            </div>
+          </article>
+          <article data-layer="Card WEB-13" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-13</span><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Live sync across tabs over WebSocket</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-teal-500"></span>Infra</span><span class="ml-auto inline-flex items-center gap-0.5 text-[11px] text-zinc-400"><svg class="size-3"><use href="#i-comment"/></svg>2</span></div>
+          </article>
+        </div>
+      </section>
+      <section data-layer="Column In Review" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+        <header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-blue-500"><use href="#st-review"/></svg><h3 class="text-sm font-medium">In Review</h3><span class="text-xs text-zinc-400">2</span><span class="ml-auto grid size-6 place-items-center rounded text-zinc-400"><svg class="size-4"><use href="#i-plus"/></svg></span></header>
+        <div class="flex flex-col gap-2 px-2 pb-2">
+          <article data-layer="Card WEB-14 live update" class="rounded-lg border border-indigo-300 bg-white p-3 ring-4 ring-indigo-100">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-14</span><span class="grid size-5 place-items-center rounded-full bg-rose-500 text-[9px] font-semibold text-white">PR</span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Issue detail side panel</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span></div>
+            <p class="mt-2.5 flex items-center gap-1.5 border-t border-zinc-100 pt-2 text-[11px] text-indigo-600"><span class="size-1.5 rounded-full bg-indigo-500"></span>Priya moved this · just now</p>
+          </article>
+          <article data-layer="Card WEB-11" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+            <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-11</span><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span></div>
+            <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Column count doesn't update after deleting an issue</p>
+            <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-red-500"></span>Bug</span><span class="ml-auto inline-flex items-center gap-0.5 text-[11px] text-zinc-400"><svg class="size-3"><use href="#i-comment"/></svg>1</span></div>
+          </article>
+        </div>
+      </section>
+      <section data-layer="Column Done" class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+        <header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-emerald-500"><use href="#st-done"/></svg><h3 class="text-sm font-medium">Done</h3><span class="text-xs text-zinc-400">3</span></header>
+        <div class="flex flex-col gap-2 px-2 pb-2">
+          <article data-layer="Card WEB-3" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs"><div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-3</span><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span></div><p class="mt-1 text-sm font-medium leading-snug text-zinc-500">Email + password login</p></article>
+          <article data-layer="Card WEB-5" class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs"><div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-5</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div><p class="mt-1 text-sm font-medium leading-snug text-zinc-500">Board layout with static data</p></article>
+        </div>
+      </section>
+    </div>
+  </main>
+</template>
+
+<header class="mx-auto max-w-[1200px] px-6 pb-10 pt-12">
+  <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600">Linear-lite · complete flow</p>
+  <h1 class="mt-1 text-3xl font-semibold tracking-tight">From sign up to log out, in 14 screens</h1>
+  <p class="mt-3 max-w-3xl text-[15px] leading-relaxed text-zinc-600">Every screen is 1440 × 900, the size of a desktop Figma frame. Each one is a route in your Next.js app, shown above the frame, with a line on the React skill it teaches. The SVG copies for Figma are in the <code class="font-mono text-sm">figma/</code> folder next to this file.</p>
+  <div class="mt-6 rounded-xl border border-zinc-200 bg-white p-5 text-sm leading-relaxed text-zinc-700">
+    <p class="font-semibold text-zinc-900">Getting these into Figma</p>
+    <ol class="mt-2 space-y-1">
+      <li>1. Open or create a Figma design file.</li>
+      <li>2. Open the <code class="font-mono text-xs">figma/</code> folder in Finder, select all 15 SVG files and drag them onto the canvas.</li>
+      <li>3. Each file becomes its own frame, named after the screen, with editable text and shapes. Layers are grouped as Sidebar, Board, Card WEB-12 and so on.</li>
+    </ol>
+  </div>
+</header>
+
+<main class="space-y-20 px-6 pb-24">
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">00</span><span class="text-lg font-semibold">Flow map</span><span class="text-sm text-zinc-500">how the screens connect</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="00 Flow map" class="screen bg-zinc-50">
+        <p class="absolute left-12 top-[176px] text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Auth</p>
+        <p class="absolute left-12 top-[386px] text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Onboarding</p>
+        <p class="absolute left-12 top-[596px] text-[11px] font-semibold uppercase tracking-wider text-zinc-400">App</p>
+
+        <svg class="absolute left-0 top-0" width="1440" height="900" viewBox="0 0 1440 900">
+          <g fill="none" stroke="#a1a1aa" stroke-width="1.5" stroke-linejoin="round">
+            <path d="M295 228V344"/>
+            <path d="M390 394H424"/><path d="M620 394H654"/>
+            <path d="M755 438V500H295V554"/>
+            <path d="M390 604H424"/><path d="M620 604H654"/>
+            <path d="M525 228V290H1000V604H856"/>
+            <path d="M620 184H654"/><path d="M850 184H884"/>
+            <path d="M985 140V110H545V134"/>
+            <path d="M755 648V710"/><path d="M525 710H1215"/>
+            <path d="M525 710V764"/><path d="M755 710V764"/><path d="M985 710V764"/><path d="M1215 710V764"/>
+            <path d="M1310 814H1380V80H505V134"/>
+          </g>
+          <g fill="#a1a1aa">
+            <path d="M290.5 342L295 350L299.5 342Z"/>
+            <path d="M422 389.5L430 394L422 398.5Z"/><path d="M652 389.5L660 394L652 398.5Z"/>
+            <path d="M290.5 552L295 560L299.5 552Z"/>
+            <path d="M422 599.5L430 604L422 608.5Z"/><path d="M652 599.5L660 604L652 608.5Z"/>
+            <path d="M858 599.5L850 604L858 608.5Z"/>
+            <path d="M652 179.5L660 184L652 188.5Z"/><path d="M882 179.5L890 184L882 188.5Z"/>
+            <path d="M540.5 132L545 140L549.5 132Z"/>
+            <path d="M520.5 762L525 770L529.5 762Z"/><path d="M750.5 762L755 770L759.5 762Z"/><path d="M980.5 762L985 770L989.5 762Z"/><path d="M1210.5 762L1215 770L1219.5 762Z"/>
+            <path d="M500.5 132L505 140L509.5 132Z"/>
+          </g>
+        </svg>
+
+        <span class="absolute left-[303px] top-[282px] bg-zinc-50 px-1 text-[11px] text-zinc-500">new user</span>
+        <span class="absolute left-[700px] top-[282px] bg-zinc-50 px-1 text-[11px] text-zinc-500">returning user</span>
+        <span class="absolute left-[470px] top-[492px] bg-zinc-50 px-1 text-[11px] text-zinc-500">onboarding done</span>
+        <span class="absolute left-[720px] top-[102px] bg-zinc-50 px-1 text-[11px] text-zinc-500">reset link from email</span>
+        <span class="absolute left-[1180px] top-[72px] bg-zinc-50 px-1 text-[11px] text-zinc-500">log out</span>
+        <span class="absolute left-[533px] top-[728px] bg-zinc-50 px-1 text-[11px] text-zinc-500">click a card</span>
+        <span class="absolute left-[763px] top-[728px] bg-zinc-50 px-1 text-[11px] text-zinc-500">⌘K</span>
+        <span class="absolute left-[993px] top-[728px] bg-zinc-50 px-1 text-[11px] text-zinc-500">sidebar</span>
+        <span class="absolute left-[1223px] top-[728px] bg-zinc-50 px-1 text-[11px] text-zinc-500">sidebar</span>
+
+        <div data-layer="Box 01" class="absolute left-[200px] top-[140px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">01</p><p class="mt-0.5 text-sm font-semibold">Sign up</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/signup</p></div>
+        <div data-layer="Box 02" class="absolute left-[430px] top-[140px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">02</p><p class="mt-0.5 text-sm font-semibold">Log in</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/login</p></div>
+        <div data-layer="Box 03" class="absolute left-[660px] top-[140px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">03</p><p class="mt-0.5 text-sm font-semibold">Forgot password</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/forgot-password</p></div>
+        <div data-layer="Box 04" class="absolute left-[890px] top-[140px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">04</p><p class="mt-0.5 text-sm font-semibold">Check your email</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/forgot-password/sent</p></div>
+        <div data-layer="Box 05" class="absolute left-[200px] top-[350px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">05</p><p class="mt-0.5 text-sm font-semibold">Create workspace</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/onboarding/workspace</p></div>
+        <div data-layer="Box 06" class="absolute left-[430px] top-[350px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">06</p><p class="mt-0.5 text-sm font-semibold">Create team</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/onboarding/team</p></div>
+        <div data-layer="Box 07" class="absolute left-[660px] top-[350px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">07</p><p class="mt-0.5 text-sm font-semibold">Invite teammates</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/onboarding/invite</p></div>
+        <div data-layer="Box 08" class="absolute left-[200px] top-[560px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">08</p><p class="mt-0.5 text-sm font-semibold">Empty board</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/acme/web/board</p></div>
+        <div data-layer="Box 09" class="absolute left-[430px] top-[560px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">09</p><p class="mt-0.5 text-sm font-semibold">New issue</p><p class="mt-1 font-mono text-[10px] text-indigo-600">dialog · press C</p></div>
+        <div data-layer="Box 10" class="absolute left-[660px] top-[560px] h-[88px] w-[190px] rounded-lg border border-indigo-500 bg-white p-3 ring-4 ring-indigo-100"><p class="font-mono text-[10px] text-zinc-400">10</p><p class="mt-0.5 text-sm font-semibold">Board</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/acme/web/board</p></div>
+        <div data-layer="Box 11" class="absolute left-[430px] top-[770px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">11</p><p class="mt-0.5 text-sm font-semibold">Issue panel</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/acme/issue/WEB-12</p></div>
+        <div data-layer="Box 12" class="absolute left-[660px] top-[770px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">12</p><p class="mt-0.5 text-sm font-semibold">Command palette</p><p class="mt-1 font-mono text-[10px] text-indigo-600">overlay · ⌘K</p></div>
+        <div data-layer="Box 13" class="absolute left-[890px] top-[770px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">13</p><p class="mt-0.5 text-sm font-semibold">Inbox</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/acme/inbox</p></div>
+        <div data-layer="Box 14" class="absolute left-[1120px] top-[770px] h-[88px] w-[190px] rounded-lg border border-zinc-300 bg-white p-3"><p class="font-mono text-[10px] text-zinc-400">14</p><p class="mt-0.5 text-sm font-semibold">Members + log out</p><p class="mt-1 font-mono text-[10px] text-indigo-600">/acme/settings/members</p></div>
+
+        <div class="absolute left-12 top-[780px] w-[340px]">
+          <p class="text-xl font-semibold tracking-tight">Linear-lite user flow</p>
+          <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">Each box is one route in the Next.js app. The board is the hub; everything after onboarding starts there.</p>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">01</span><span class="text-lg font-semibold">Sign up</span><code class="font-mono text-xs text-indigo-600">/signup</code><span class="text-sm text-zinc-500">Forms and controlled inputs. The strength meter is computed from the password as you type.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="01 Sign up" class="screen flex bg-white">
+        <div data-use="tpl-brand"></div>
+        <div class="flex flex-1 items-center justify-center">
+          <div data-layer="Sign up form" class="w-[380px]">
+            <h1 class="text-2xl font-semibold tracking-tight">Create your account</h1>
+            <p class="mt-1.5 text-sm text-zinc-500">Start with a free workspace. No card needed.</p>
+            <div data-layer="Button Google" class="mt-7 flex h-10 w-full items-center justify-center gap-2.5 rounded-md border border-zinc-300 bg-white text-sm font-medium text-zinc-800"><span class="text-[15px] font-bold text-blue-600">G</span>Continue with Google</div>
+            <div class="my-6 flex items-center gap-3 text-xs text-zinc-400"><span class="h-px flex-1 bg-zinc-200"></span>or<span class="h-px flex-1 bg-zinc-200"></span></div>
+            <div class="space-y-4">
+              <div data-layer="Field Name"><label class="block text-sm font-medium text-zinc-800">Full name</label><input value="Aarav Kapoor" class="mt-1.5 h-10 w-full rounded-md border border-zinc-300 px-3 text-sm text-zinc-900 outline-none"></div>
+              <div data-layer="Field Email"><label class="block text-sm font-medium text-zinc-800">Work email</label><input value="aarav@acme.dev" class="mt-1.5 h-10 w-full rounded-md border border-zinc-300 px-3 text-sm text-zinc-900 outline-none"></div>
+              <div data-layer="Field Password">
+                <label class="block text-sm font-medium text-zinc-800">Password</label>
+                <div class="relative mt-1.5">
+                  <input value="••••••••••••" class="h-10 w-full rounded-md border border-indigo-500 px-3 pr-10 text-sm tracking-widest text-zinc-900 outline-none ring-4 ring-indigo-100">
+                  <svg class="absolute right-3 top-3 size-4 text-zinc-400"><use href="#i-eye"/></svg>
+                </div>
+                <div class="mt-2 flex gap-1"><span class="h-1 flex-1 rounded-full bg-emerald-500"></span><span class="h-1 flex-1 rounded-full bg-emerald-500"></span><span class="h-1 flex-1 rounded-full bg-emerald-500"></span><span class="h-1 flex-1 rounded-full bg-zinc-200"></span></div>
+                <p class="mt-1.5 text-xs text-emerald-700">Strong password</p>
+              </div>
+            </div>
+            <div data-layer="Button Create account" class="mt-6 flex h-10 w-full items-center justify-center rounded-md bg-indigo-600 text-sm font-medium text-white shadow-sm">Create account</div>
+            <p class="mt-4 text-center text-xs text-zinc-500">By signing up you agree to the Terms and Privacy Policy.</p>
+            <p class="mt-8 text-center text-sm text-zinc-600">Already have an account? <span class="font-medium text-indigo-600">Log in</span></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">02</span><span class="text-lg font-semibold">Log in</span><code class="font-mono text-xs text-indigo-600">/login</code><span class="text-sm text-zinc-500">A server error (wrong password) is shown differently from a field error. Redirect to the board on success.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="02 Log in" class="screen flex bg-white">
+        <div data-use="tpl-brand"></div>
+        <div class="flex flex-1 items-center justify-center">
+          <div data-layer="Log in form" class="w-[380px]">
+            <h1 class="text-2xl font-semibold tracking-tight">Welcome back</h1>
+            <p class="mt-1.5 text-sm text-zinc-500">Log in to your Acme workspace.</p>
+            <div data-layer="Button Google" class="mt-7 flex h-10 w-full items-center justify-center gap-2.5 rounded-md border border-zinc-300 bg-white text-sm font-medium text-zinc-800"><span class="text-[15px] font-bold text-blue-600">G</span>Continue with Google</div>
+            <div class="my-6 flex items-center gap-3 text-xs text-zinc-400"><span class="h-px flex-1 bg-zinc-200"></span>or<span class="h-px flex-1 bg-zinc-200"></span></div>
+            <div data-layer="Error banner" class="flex gap-2.5 rounded-md border border-red-200 bg-red-50 p-3 text-sm">
+              <svg class="mt-0.5 size-4 shrink-0 text-red-600"><use href="#i-alert"/></svg>
+              <div><p class="font-medium text-red-800">Wrong email or password</p><p class="mt-0.5 text-red-700">Check them and try again, or reset your password.</p></div>
+            </div>
+            <div class="mt-5 space-y-4">
+              <div data-layer="Field Email"><label class="block text-sm font-medium text-zinc-800">Email</label><input value="aarav@acme.dev" class="mt-1.5 h-10 w-full rounded-md border border-zinc-300 px-3 text-sm text-zinc-900 outline-none"></div>
+              <div data-layer="Field Password">
+                <div class="flex items-center justify-between"><label class="text-sm font-medium text-zinc-800">Password</label><span class="text-xs font-medium text-indigo-600">Forgot password?</span></div>
+                <input value="••••••••" class="mt-1.5 h-10 w-full rounded-md border border-red-400 px-3 text-sm tracking-widest text-zinc-900 outline-none ring-4 ring-red-100">
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-sm text-zinc-600"><span class="grid size-4 place-items-center rounded bg-indigo-600 text-white"><svg class="size-3"><use href="#i-check"/></svg></span>Keep me logged in</div>
+            <div data-layer="Button Log in" class="mt-6 flex h-10 w-full items-center justify-center rounded-md bg-indigo-600 text-sm font-medium text-white shadow-sm">Log in</div>
+            <p class="mt-8 text-center text-sm text-zinc-600">New to Linear-lite? <span class="font-medium text-indigo-600">Create an account</span></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">03</span><span class="text-lg font-semibold">Forgot password</span><code class="font-mono text-xs text-indigo-600">/forgot-password</code><span class="text-sm text-zinc-500">The simplest form in the app: one field and a server action. Good first thing to build.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="03 Forgot password" class="screen flex flex-col items-center bg-zinc-50">
+        <div class="mt-14 flex items-center gap-2.5"><span class="grid size-8 place-items-center rounded-lg bg-indigo-600 text-xs font-bold text-white">LL</span><span class="text-lg font-semibold">Linear-lite</span></div>
+        <div data-layer="Card" class="mt-24 w-[420px] rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
+          <span class="grid size-11 place-items-center rounded-full bg-indigo-50 text-indigo-600"><svg class="size-5"><use href="#i-key"/></svg></span>
+          <h1 class="mt-5 text-xl font-semibold tracking-tight">Reset your password</h1>
+          <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">Enter the email you signed up with and we'll send you a link to set a new password.</p>
+          <label class="mt-6 block text-sm font-medium text-zinc-800">Email</label>
+          <input value="aarav@acme.dev" class="mt-1.5 h-10 w-full rounded-md border border-zinc-300 px-3 text-sm text-zinc-900 outline-none">
+          <div data-layer="Button Send reset link" class="mt-5 flex h-10 w-full items-center justify-center rounded-md bg-indigo-600 text-sm font-medium text-white shadow-sm">Send reset link</div>
+          <p class="mt-5 flex items-center justify-center gap-1.5 text-sm text-zinc-600"><svg class="size-4"><use href="#i-arrow-left"/></svg>Back to log in</p>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">04</span><span class="text-lg font-semibold">Check your email</span><code class="font-mono text-xs text-indigo-600">/forgot-password/sent</code><span class="text-sm text-zinc-500">A countdown timer: useEffect with setInterval, and clearing it on unmount.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="04 Check your email" class="screen flex flex-col items-center bg-zinc-50">
+        <div class="mt-14 flex items-center gap-2.5"><span class="grid size-8 place-items-center rounded-lg bg-indigo-600 text-xs font-bold text-white">LL</span><span class="text-lg font-semibold">Linear-lite</span></div>
+        <div data-layer="Card" class="mt-24 w-[420px] rounded-xl border border-zinc-200 bg-white p-8 text-center shadow-sm">
+          <span class="mx-auto grid size-12 place-items-center rounded-full bg-indigo-50 text-indigo-600"><svg class="size-6"><use href="#i-mail"/></svg></span>
+          <h1 class="mt-5 text-xl font-semibold tracking-tight">Check your email</h1>
+          <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">We sent a reset link to <span class="font-medium text-zinc-800">aarav@acme.dev</span>.</p>
+          <p class="text-sm leading-relaxed text-zinc-500">The link expires in 30 minutes.</p>
+          <div data-layer="Button Open email" class="mt-6 flex h-10 w-full items-center justify-center rounded-md border border-zinc-300 bg-white text-sm font-medium text-zinc-800">Open email app</div>
+          <p class="mt-4 text-sm text-zinc-500">Didn't get it? <span class="text-zinc-400">Resend in 0:42</span></p>
+          <p class="mt-6 flex items-center justify-center gap-1.5 text-sm text-zinc-600"><svg class="size-4"><use href="#i-arrow-left"/></svg>Back to log in</p>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">05</span><span class="text-lg font-semibold">Create workspace</span><code class="font-mono text-xs text-indigo-600">/onboarding/workspace</code><span class="text-sm text-zinc-500">Derived state: the URL fills in from the name. Checking "is acme taken?" while typing teaches debouncing.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="05 Create workspace" class="screen flex flex-col bg-white">
+        <div data-use="tpl-onb-top"></div>
+        <div class="flex flex-1 flex-col items-center pt-14">
+          <ol data-layer="Stepper" class="flex items-center gap-3 text-sm">
+            <li class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full bg-indigo-600 text-xs font-semibold text-white">1</span><span class="font-medium text-zinc-900">Workspace</span></li>
+            <li class="h-px w-10 bg-zinc-300"></li>
+            <li class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full border border-zinc-300 text-xs font-medium text-zinc-500">2</span><span class="text-zinc-500">Team</span></li>
+            <li class="h-px w-10 bg-zinc-300"></li>
+            <li class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full border border-zinc-300 text-xs font-medium text-zinc-500">3</span><span class="text-zinc-500">Invite</span></li>
+          </ol>
+          <div data-layer="Workspace form" class="mt-12 w-[460px]">
+            <h1 class="text-2xl font-semibold tracking-tight">Create your workspace</h1>
+            <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">A workspace holds your teams, projects and issues. Most companies only need one.</p>
+            <div class="mt-8 space-y-5">
+              <div data-layer="Field Workspace name"><label class="block text-sm font-medium text-zinc-800">Workspace name</label><input value="Acme" class="mt-1.5 h-10 w-full rounded-md border border-zinc-300 px-3 text-sm text-zinc-900 outline-none"></div>
+              <div data-layer="Field Workspace URL">
+                <label class="block text-sm font-medium text-zinc-800">Workspace URL</label>
+                <div class="mt-1.5 flex h-10 overflow-hidden rounded-md border border-indigo-500 ring-4 ring-indigo-100">
+                  <span class="flex items-center border-r border-zinc-300 bg-zinc-50 px-3 text-sm text-zinc-500">linear-lite.app/</span>
+                  <input value="acme" class="min-w-0 flex-1 px-3 text-sm text-zinc-900 outline-none">
+                  <span class="flex items-center pr-3 text-emerald-600"><svg class="size-4"><use href="#i-check"/></svg></span>
+                </div>
+                <p class="mt-1.5 text-xs text-emerald-700">acme is available</p>
+              </div>
+              <div data-layer="Field Team size">
+                <label class="block text-sm font-medium text-zinc-800">How many people will use it?</label>
+                <div class="mt-1.5 grid grid-cols-4 gap-2 text-sm">
+                  <span class="flex h-9 items-center justify-center rounded-md border border-zinc-300 text-zinc-700">Just me</span>
+                  <span class="flex h-9 items-center justify-center rounded-md border border-indigo-600 bg-indigo-50 font-medium text-indigo-700 ring-1 ring-indigo-600">2–10</span>
+                  <span class="flex h-9 items-center justify-center rounded-md border border-zinc-300 text-zinc-700">11–50</span>
+                  <span class="flex h-9 items-center justify-center rounded-md border border-zinc-300 text-zinc-700">50+</span>
+                </div>
+              </div>
+            </div>
+            <div data-layer="Button Continue" class="mt-8 flex h-10 w-full items-center justify-center rounded-md bg-indigo-600 text-sm font-medium text-white shadow-sm">Continue</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">06</span><span class="text-lg font-semibold">Create team</span><code class="font-mono text-xs text-indigo-600">/onboarding/team</code><span class="text-sm text-zinc-500">A live preview that re-renders from form values. Shows how props flow down.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="06 Create team" class="screen flex flex-col bg-white">
+        <div data-use="tpl-onb-top"></div>
+        <div class="flex flex-1 flex-col items-center pt-14">
+          <ol data-layer="Stepper" class="flex items-center gap-3 text-sm">
+            <li class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full bg-indigo-600 text-white"><svg class="size-3.5"><use href="#i-check"/></svg></span><span class="text-zinc-700">Workspace</span></li>
+            <li class="h-px w-10 bg-indigo-600"></li>
+            <li class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full bg-indigo-600 text-xs font-semibold text-white">2</span><span class="font-medium text-zinc-900">Team</span></li>
+            <li class="h-px w-10 bg-zinc-300"></li>
+            <li class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full border border-zinc-300 text-xs font-medium text-zinc-500">3</span><span class="text-zinc-500">Invite</span></li>
+          </ol>
+          <div data-layer="Team form" class="mt-12 w-[460px]">
+            <h1 class="text-2xl font-semibold tracking-tight">Create your first team</h1>
+            <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">Teams group people and their issues. You can add more later.</p>
+            <div class="mt-8 space-y-5">
+              <div data-layer="Field Team name"><label class="block text-sm font-medium text-zinc-800">Team name</label><input value="Web Team" class="mt-1.5 h-10 w-full rounded-md border border-zinc-300 px-3 text-sm text-zinc-900 outline-none"></div>
+              <div class="grid grid-cols-[140px_1fr] gap-4">
+                <div data-layer="Field Team key"><label class="block text-sm font-medium text-zinc-800">Team key</label><input value="WEB" class="mt-1.5 h-10 w-full rounded-md border border-zinc-300 px-3 font-mono text-sm text-zinc-900 outline-none"></div>
+                <div data-layer="Field Color">
+                  <label class="block text-sm font-medium text-zinc-800">Color</label>
+                  <div class="mt-1.5 flex h-10 items-center gap-2.5">
+                    <span class="size-7 rounded-md bg-emerald-500 ring-2 ring-emerald-500 ring-offset-2"></span>
+                    <span class="size-7 rounded-md bg-sky-500"></span>
+                    <span class="size-7 rounded-md bg-violet-500"></span>
+                    <span class="size-7 rounded-md bg-rose-500"></span>
+                    <span class="size-7 rounded-md bg-amber-500"></span>
+                    <span class="size-7 rounded-md bg-zinc-500"></span>
+                  </div>
+                </div>
+              </div>
+              <div data-layer="Preview" class="rounded-lg border border-dashed border-zinc-300 bg-zinc-50 p-4">
+                <p class="text-xs font-medium text-zinc-500">Preview</p>
+                <div class="mt-3 w-64 rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+                  <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-1</span><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span></div>
+                  <p class="mt-1 text-sm font-medium text-zinc-800">Your first issue</p>
+                  <div class="mt-3 flex items-center gap-1.5"><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="grid size-3 place-items-center rounded-sm bg-emerald-500 text-[7px] font-bold text-white">W</span>Web Team</span></div>
+                </div>
+                <p class="mt-3 text-xs text-zinc-500">Issues in this team are numbered WEB-1, WEB-2, WEB-3…</p>
+              </div>
+            </div>
+            <div class="mt-8 flex gap-3">
+              <div data-layer="Button Back" class="flex h-10 w-28 items-center justify-center rounded-md border border-zinc-300 text-sm font-medium text-zinc-700">Back</div>
+              <div data-layer="Button Continue" class="flex h-10 flex-1 items-center justify-center rounded-md bg-indigo-600 text-sm font-medium text-white shadow-sm">Continue</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">07</span><span class="text-lg font-semibold">Invite teammates</span><code class="font-mono text-xs text-indigo-600">/onboarding/invite</code><span class="text-sm text-zinc-500">A chip input: an array in state, plus Enter, comma and Backspace key handling.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="07 Invite teammates" class="screen flex flex-col bg-white">
+        <div data-use="tpl-onb-top"></div>
+        <div class="flex flex-1 flex-col items-center pt-14">
+          <ol data-layer="Stepper" class="flex items-center gap-3 text-sm">
+            <li class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full bg-indigo-600 text-white"><svg class="size-3.5"><use href="#i-check"/></svg></span><span class="text-zinc-700">Workspace</span></li>
+            <li class="h-px w-10 bg-indigo-600"></li>
+            <li class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full bg-indigo-600 text-white"><svg class="size-3.5"><use href="#i-check"/></svg></span><span class="text-zinc-700">Team</span></li>
+            <li class="h-px w-10 bg-indigo-600"></li>
+            <li class="flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full bg-indigo-600 text-xs font-semibold text-white">3</span><span class="font-medium text-zinc-900">Invite</span></li>
+          </ol>
+          <div data-layer="Invite form" class="mt-12 w-[460px]">
+            <h1 class="text-2xl font-semibold tracking-tight">Invite your teammates</h1>
+            <p class="mt-1.5 text-sm leading-relaxed text-zinc-500">They'll get an email with a link to join Acme.</p>
+            <div class="mt-8 space-y-5">
+              <div data-layer="Field Emails">
+                <label class="block text-sm font-medium text-zinc-800">Email addresses</label>
+                <div class="mt-1.5 flex min-h-[88px] flex-wrap content-start gap-1.5 rounded-md border border-indigo-500 p-2 ring-4 ring-indigo-100">
+                  <span class="inline-flex h-7 items-center gap-1.5 rounded-md bg-zinc-100 pl-1 pr-1.5 text-sm text-zinc-800"><span class="grid size-5 place-items-center rounded-full bg-rose-500 text-[9px] font-semibold text-white">P</span>priya@acme.dev<svg class="size-3.5 text-zinc-400"><use href="#i-x"/></svg></span>
+                  <span class="inline-flex h-7 items-center gap-1.5 rounded-md bg-zinc-100 pl-1 pr-1.5 text-sm text-zinc-800"><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">R</span>rohan@acme.dev<svg class="size-3.5 text-zinc-400"><use href="#i-x"/></svg></span>
+                  <span class="inline-flex h-7 items-center pl-1 text-sm text-zinc-900">meera@acm<span class="ml-px h-4 w-px bg-zinc-900"></span></span>
+                </div>
+                <p class="mt-1.5 text-xs text-zinc-500">Press Enter or a comma after each email.</p>
+              </div>
+              <div data-layer="Field Role">
+                <label class="block text-sm font-medium text-zinc-800">Invite as</label>
+                <div class="mt-1.5 flex h-10 items-center justify-between rounded-md border border-zinc-300 px-3 text-sm text-zinc-900">Member<svg class="size-4 text-zinc-400"><use href="#i-chevron-down"/></svg></div>
+                <p class="mt-1.5 text-xs text-zinc-500">Admins can also manage members and settings.</p>
+              </div>
+              <div data-layer="Invite link">
+                <label class="block text-sm font-medium text-zinc-800">Or share an invite link</label>
+                <div class="mt-1.5 flex gap-2">
+                  <div class="flex h-10 flex-1 items-center rounded-md border border-zinc-200 bg-zinc-50 px-3 font-mono text-xs text-zinc-600">linear-lite.app/join/acme-8f2k9</div>
+                  <div class="flex h-10 items-center gap-1.5 rounded-md border border-zinc-300 px-3 text-sm font-medium text-zinc-700"><svg class="size-4"><use href="#i-copy"/></svg>Copy</div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-8 flex items-center gap-3">
+              <span class="text-sm font-medium text-zinc-600">Skip for now</span>
+              <div data-layer="Button Send invites" class="ml-auto flex h-10 items-center justify-center rounded-md bg-indigo-600 px-5 text-sm font-medium text-white shadow-sm">Send 2 invites</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">08</span><span class="text-lg font-semibold">Empty board (first visit)</span><code class="font-mono text-xs text-indigo-600">/acme/web/board</code><span class="text-sm text-zinc-500">The app shell (sidebar + header) lives in layout.tsx and is shared by every app screen. Empty states matter.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="08 Empty board" class="screen flex bg-white">
+        <div data-use="tpl-sidebar" data-active="board" data-onboarding="1"></div>
+        <div data-use="tpl-empty-main"></div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">09</span><span class="text-lg font-semibold">New issue</span><code class="font-mono text-xs text-indigo-600">dialog over the board</code><span class="text-sm text-zinc-500">A modal with focus trapping, a form with react-hook-form + zod, then the new card appears instantly (optimistic).</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="09 New issue" class="screen flex bg-white">
+        <div data-use="tpl-sidebar" data-active="board" data-onboarding="1"></div>
+        <div data-use="tpl-empty-main"></div>
+        <div data-layer="Overlay" class="absolute inset-0 bg-zinc-950/30"></div>
+        <div data-layer="New issue dialog" class="absolute left-1/2 top-[150px] w-[620px] -translate-x-1/2 rounded-xl border border-zinc-200 bg-white shadow-2xl">
+          <div class="flex items-center gap-1.5 px-5 pt-4 text-xs text-zinc-500">
+            <span class="grid size-4 place-items-center rounded bg-emerald-500 text-[9px] font-semibold text-white">W</span>Web Team<svg class="size-3 text-zinc-400"><use href="#i-chevron-right"/></svg>New issue
+            <span class="ml-auto grid size-6 place-items-center rounded text-zinc-400"><svg class="size-4"><use href="#i-x"/></svg></span>
+          </div>
+          <div class="px-5 pt-4">
+            <input value="Build the login page" class="w-full text-lg font-semibold text-zinc-900 outline-none">
+            <p class="mt-2 text-sm leading-relaxed text-zinc-700">Email + password form with zod validation. Show an error banner when the credentials are wrong.</p>
+            <div class="h-16"></div>
+          </div>
+          <div data-layer="Properties" class="flex flex-wrap gap-1.5 px-5 pb-4">
+            <span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-700"><svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg>Todo</span>
+            <span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-700"><svg class="size-3.5 text-zinc-600"><use href="#pr-high"/></svg>High</span>
+            <span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-700"><span class="grid size-4 place-items-center rounded-full bg-indigo-500 text-[8px] font-semibold text-white">AK</span>Aarav</span>
+            <span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-700"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+            <span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-500"><svg class="size-3.5"><use href="#i-calendar"/></svg>Due date</span>
+          </div>
+          <div class="flex items-center gap-2 border-t border-zinc-100 px-5 py-3">
+            <span class="flex items-center gap-2 text-xs text-zinc-600"><span class="relative h-4 w-7 rounded-full bg-indigo-600"><span class="absolute right-0.5 top-0.5 size-3 rounded-full bg-white"></span></span>Create more</span>
+            <span class="ml-auto flex h-8 items-center rounded-md px-3 text-sm text-zinc-600">Cancel</span>
+            <span data-layer="Button Create issue" class="inline-flex h-8 items-center gap-2 rounded-md bg-indigo-600 px-3 text-sm font-medium text-white">Create issue<kbd class="rounded bg-indigo-500 px-1 font-mono text-[10px]">⌘↵</kbd></span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">10</span><span class="text-lg font-semibold">Board</span><code class="font-mono text-xs text-indigo-600">/acme/web/board?project=linear-lite-v1</code><span class="text-sm text-zinc-500">The core: drag and drop with dnd-kit, TanStack Query cache, optimistic moves, live WebSocket updates.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="10 Board" class="screen flex bg-white">
+        <div data-use="tpl-sidebar" data-active="board"></div>
+        <div data-use="tpl-board-main" data-drag="1"></div>
+        <article data-layer="Card WEB-15 dragging" class="absolute left-[806px] top-[264px] z-10 w-[240px] rotate-[2.5deg] rounded-lg border border-indigo-200 bg-white p-3 shadow-2xl ring-1 ring-indigo-100">
+          <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">WEB-15</span><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span></div>
+          <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Keep board filters in the URL</p>
+          <div class="mt-3 flex items-center gap-1.5"><span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span><span class="ml-auto inline-flex items-center gap-0.5 text-[11px] text-zinc-400"><svg class="size-3"><use href="#i-calendar"/></svg>Oct 14</span></div>
+        </article>
+        <div data-layer="Toast" class="absolute bottom-6 right-6 z-20 flex w-80 items-start gap-3 rounded-lg border border-zinc-200 bg-white p-3 shadow-lg">
+          <span class="grid size-6 shrink-0 place-items-center rounded-full bg-rose-500 text-[10px] font-semibold text-white">PR</span>
+          <div class="text-sm">
+            <p class="text-zinc-700"><span class="font-medium text-zinc-900">Priya</span> moved <span class="font-mono text-xs">WEB-14</span> to <span class="font-medium text-zinc-900">In Review</span></p>
+            <p class="mt-0.5 text-xs text-zinc-500">just now</p>
+          </div>
+          <svg class="ml-auto size-4 shrink-0 text-zinc-400"><use href="#i-x"/></svg>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">11</span><span class="text-lg font-semibold">Issue panel</span><code class="font-mono text-xs text-indigo-600">/acme/issue/WEB-12</code><span class="text-sm text-zinc-500">Its own URL, shown over the board: Next.js intercepting + parallel routes. Edit-in-place fields.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="11 Issue panel" class="screen flex bg-white">
+        <div data-use="tpl-sidebar" data-active="board"></div>
+        <div data-use="tpl-board-main"></div>
+        <div data-layer="Overlay" class="absolute inset-0 bg-zinc-950/20"></div>
+        <aside data-layer="Issue panel" class="absolute inset-y-0 right-0 flex w-[820px] border-l border-zinc-200 bg-white shadow-2xl">
+          <div class="flex min-w-0 flex-1 flex-col">
+            <div class="flex h-12 shrink-0 items-center gap-1.5 border-b border-zinc-200 px-6 text-sm">
+              <span class="text-zinc-500">Web Team</span><svg class="size-3.5 text-zinc-400"><use href="#i-chevron-right"/></svg><span class="font-mono text-xs text-zinc-700">WEB-12</span>
+              <div class="ml-auto flex items-center gap-0.5 text-zinc-500">
+                <span class="grid size-7 place-items-center rounded-md"><svg class="size-4"><use href="#i-link"/></svg></span>
+                <span class="grid size-7 place-items-center rounded-md"><svg class="size-4"><use href="#i-more"/></svg></span>
+                <span class="grid size-7 place-items-center rounded-md"><svg class="size-4"><use href="#i-x"/></svg></span>
+              </div>
+            </div>
+            <div class="flex-1 overflow-hidden px-8 py-6">
+              <h2 class="text-xl font-semibold tracking-tight">Drag and drop cards between columns</h2>
+              <p class="mt-3 text-sm leading-relaxed text-zinc-700">Users should be able to move a card to another column by dragging it. The card moves straight away and we save in the background.</p>
+              <p class="mt-4 text-sm font-medium text-zinc-900">Acceptance criteria</p>
+              <ul class="mt-2 space-y-1.5 text-sm text-zinc-700">
+                <li class="flex items-center gap-2"><span class="grid size-4 place-items-center rounded bg-indigo-600 text-white"><svg class="size-3"><use href="#i-check"/></svg></span><span class="text-zinc-500 line-through">Card follows the pointer while dragging</span></li>
+                <li class="flex items-center gap-2"><span class="grid size-4 place-items-center rounded bg-indigo-600 text-white"><svg class="size-3"><use href="#i-check"/></svg></span><span class="text-zinc-500 line-through">Dashed slot shows where it will land</span></li>
+                <li class="flex items-center gap-2"><span class="size-4 rounded border border-zinc-300"></span>Status saves after drop (optimistic)</li>
+                <li class="flex items-center gap-2"><span class="size-4 rounded border border-zinc-300"></span>If saving fails, card moves back and an error toast shows</li>
+              </ul>
+              <div class="mt-7 flex items-center justify-between">
+                <p class="text-sm font-semibold">Activity</p>
+                <span data-layer="Button Summarize" class="inline-flex h-7 items-center gap-1.5 rounded-md border border-fuchsia-200 bg-fuchsia-50 px-2 text-xs font-medium text-fuchsia-700"><svg class="size-3.5"><use href="#i-sparkles"/></svg>Summarize thread</span>
+              </div>
+              <div class="mt-4 space-y-4">
+                <p class="flex items-center gap-2 text-xs text-zinc-500"><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span><span class="font-medium text-zinc-700">Aarav</span>created the issue<span class="text-zinc-400">· 3 days ago</span></p>
+                <div data-layer="Comment" class="rounded-lg border border-zinc-200 p-3">
+                  <p class="flex items-center gap-2 text-xs"><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span><span class="font-medium text-zinc-900">Rohan</span><span class="text-zinc-400">yesterday</span></p>
+                  <p class="mt-2 text-sm text-zinc-700">dnd-kit supports dragging with the keyboard out of the box. Worth using instead of the browser's built-in drag API.</p>
+                </div>
+                <p class="flex items-center gap-2 text-xs text-zinc-500"><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span><span class="font-medium text-zinc-700">Aarav</span>moved from<svg class="size-3 text-zinc-500"><use href="#st-todo"/></svg>Todo to<svg class="size-3 text-amber-500"><use href="#st-progress"/></svg>In Progress<span class="text-zinc-400">· 1 hour ago</span></p>
+              </div>
+              <div data-layer="Comment box" class="mt-5 rounded-lg border border-zinc-300">
+                <div class="h-16 px-3 py-2 text-sm text-zinc-400">Leave a comment…</div>
+                <div class="flex items-center justify-end gap-3 border-t border-zinc-100 px-2 py-1.5"><span class="text-[11px] text-zinc-400">⌘↵ to send</span><span class="flex h-7 items-center rounded-md bg-zinc-900 px-3 text-xs font-medium text-white">Comment</span></div>
+              </div>
+            </div>
+          </div>
+          <div data-layer="Properties" class="w-60 shrink-0 border-l border-zinc-200 bg-zinc-50 px-3 py-5">
+            <div class="space-y-1 text-sm">
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><span class="pl-1 text-xs text-zinc-500">Status</span><span class="flex items-center gap-2 rounded-md px-2 py-1"><svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg>In Progress</span></div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><span class="pl-1 text-xs text-zinc-500">Priority</span><span class="flex items-center gap-2 rounded-md px-2 py-1"><svg class="size-3.5 text-orange-500"><use href="#pr-urgent"/></svg>Urgent</span></div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><span class="pl-1 text-xs text-zinc-500">Assignee</span><span class="flex items-center gap-2 rounded-md px-2 py-1"><span class="grid size-4 place-items-center rounded-full bg-indigo-500 text-[8px] font-semibold text-white">AK</span>Aarav Kapoor</span></div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><span class="pl-1 text-xs text-zinc-500">Labels</span><span class="flex items-center gap-1 px-2 py-1"><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 bg-white px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span><span class="grid size-5 place-items-center rounded text-zinc-400"><svg class="size-3"><use href="#i-plus"/></svg></span></span></div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><span class="pl-1 text-xs text-zinc-500">Project</span><span class="flex items-center gap-2 rounded-md px-2 py-1"><span class="size-2 rounded-sm bg-violet-500"></span>Linear-lite v1</span></div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><span class="pl-1 text-xs text-zinc-500">Due date</span><span class="flex items-center gap-2 rounded-md px-2 py-1 text-amber-700"><svg class="size-3.5"><use href="#i-calendar"/></svg>Oct 9</span></div>
+            </div>
+            <div class="mt-6 space-y-1 border-t border-zinc-200 px-1 pt-4 text-xs text-zinc-500"><p>Created Oct 4 by Aarav</p><p>Updated 1 hour ago</p></div>
+          </div>
+        </aside>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">12</span><span class="text-lg font-semibold">Command palette</span><code class="font-mono text-xs text-indigo-600">⌘K from anywhere</code><span class="text-sm text-zinc-500">A global keyboard listener in the root layout, plus keyboard-driven lists (shadcn Command / cmdk).</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="12 Command palette" class="screen flex bg-white">
+        <div data-use="tpl-sidebar" data-active="board"></div>
+        <div data-use="tpl-board-main"></div>
+        <div data-layer="Overlay" class="absolute inset-0 bg-zinc-950/30"></div>
+        <div data-layer="Command palette" class="absolute left-1/2 top-[120px] w-[600px] -translate-x-1/2 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl">
+          <div class="flex items-center gap-2 border-b border-zinc-200 px-4">
+            <svg class="size-4 text-zinc-400"><use href="#i-search"/></svg>
+            <div class="flex h-12 items-center text-[15px] text-zinc-400"><span class="mr-1 h-5 w-px bg-zinc-900"></span>Type a command or search…</div>
+            <kbd class="ml-auto rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">esc</kbd>
+          </div>
+          <div class="p-2 text-sm">
+            <p class="px-2 pb-1 pt-1 text-[11px] font-medium text-zinc-400">Recent issues</p>
+            <div class="flex items-center gap-3 rounded-md bg-zinc-100 px-2 py-2"><svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg><span class="font-mono text-[11px] text-zinc-400">WEB-12</span><span class="text-zinc-900">Drag and drop cards between columns</span><svg class="ml-auto size-3.5 text-zinc-400"><use href="#i-enter"/></svg></div>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-3.5 text-blue-500"><use href="#st-review"/></svg><span class="font-mono text-[11px] text-zinc-400">WEB-14</span>Issue detail side panel</div>
+            <p class="px-2 pb-1 pt-3 text-[11px] font-medium text-zinc-400">Actions</p>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-4 text-zinc-500"><use href="#i-plus"/></svg>Create new issue<kbd class="ml-auto rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">C</kbd></div>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg>Change status…<kbd class="ml-auto rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">S</kbd></div>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-4 text-zinc-500"><use href="#i-user"/></svg>Assign to me<kbd class="ml-auto rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">I</kbd></div>
+            <p class="px-2 pb-1 pt-3 text-[11px] font-medium text-zinc-400">Navigation</p>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-4 text-zinc-500"><use href="#i-inbox"/></svg>Go to inbox<span class="ml-auto flex gap-1"><kbd class="rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">G</kbd><kbd class="rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">I</kbd></span></div>
+          </div>
+          <div class="flex items-center gap-4 border-t border-zinc-200 bg-zinc-50 px-4 py-2 text-[11px] text-zinc-500">
+            <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 bg-white px-1 font-mono">↑</kbd><kbd class="rounded border border-zinc-200 bg-white px-1 font-mono">↓</kbd>navigate</span>
+            <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 bg-white px-1 font-mono">↵</kbd>open</span>
+            <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 bg-white px-1 font-mono">esc</kbd>close</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">13</span><span class="text-lg font-semibold">Inbox</span><code class="font-mono text-xs text-indigo-600">/acme/inbox</code><span class="text-sm text-zinc-500">A list + detail layout, read/unread state, and new notifications pushed over the WebSocket.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="13 Inbox" class="screen flex bg-white">
+        <div data-use="tpl-sidebar" data-active="inbox"></div>
+        <main class="flex min-w-0 flex-1">
+          <div data-layer="Notification list" class="flex w-[420px] shrink-0 flex-col border-r border-zinc-200">
+            <div class="flex h-12 shrink-0 items-center justify-between border-b border-zinc-200 px-4"><p class="text-sm font-semibold">Inbox</p><span class="text-xs text-zinc-500">Mark all as read</span></div>
+            <div class="flex gap-1 border-b border-zinc-200 px-3 py-2 text-xs">
+              <span class="rounded-md bg-zinc-100 px-2.5 py-1 font-medium text-zinc-900">All</span>
+              <span class="rounded-md px-2.5 py-1 text-zinc-500">Mentions</span>
+              <span class="rounded-md px-2.5 py-1 text-zinc-500">Assigned to me</span>
+            </div>
+            <div data-layer="Notification selected" class="flex gap-3 border-b border-l-2 border-zinc-100 border-l-indigo-600 bg-indigo-50 px-4 py-3">
+              <span class="mt-2.5 size-2 shrink-0 rounded-full bg-indigo-600"></span>
+              <span class="grid size-7 shrink-0 place-items-center rounded-full bg-rose-500 text-[10px] font-semibold text-white">PR</span>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-baseline justify-between gap-2"><p class="text-sm text-zinc-900"><span class="font-medium">Priya</span> mentioned you</p><span class="text-xs text-zinc-400">2m</span></div>
+                <p class="mt-0.5 text-xs text-zinc-500"><span class="font-mono">WEB-14</span> · Issue detail side panel</p>
+                <p class="mt-1.5 text-sm text-zinc-600">@Aarav can you check the panel slide-in?</p>
+              </div>
+            </div>
+            <div data-layer="Notification" class="flex gap-3 border-b border-zinc-100 px-4 py-3">
+              <span class="mt-2.5 size-2 shrink-0 rounded-full bg-indigo-600"></span>
+              <span class="grid size-7 shrink-0 place-items-center rounded-full bg-emerald-600 text-[10px] font-semibold text-white">RJ</span>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-baseline justify-between gap-2"><p class="text-sm text-zinc-900"><span class="font-medium">Rohan</span> assigned you an issue</p><span class="text-xs text-zinc-400">1h</span></div>
+                <p class="mt-0.5 text-xs text-zinc-500"><span class="font-mono">WEB-18</span> · Roll a card back if its move fails</p>
+              </div>
+            </div>
+            <div data-layer="Notification" class="flex gap-3 border-b border-zinc-100 px-4 py-3">
+              <span class="mt-2.5 size-2 shrink-0 rounded-full bg-indigo-600"></span>
+              <span class="grid size-7 shrink-0 place-items-center rounded-full bg-amber-500 text-[10px] font-semibold text-white">MS</span>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-baseline justify-between gap-2"><p class="text-sm text-zinc-900"><span class="font-medium">Meera</span> commented</p><span class="text-xs text-zinc-400">3h</span></div>
+                <p class="mt-0.5 text-xs text-zinc-500"><span class="font-mono">WEB-12</span> · Drag and drop cards between columns</p>
+                <p class="mt-1.5 text-sm text-zinc-600">Keyboard dragging works now.</p>
+              </div>
+            </div>
+            <div data-layer="Notification read" class="flex gap-3 border-b border-zinc-100 px-4 py-3">
+              <span class="size-2 shrink-0"></span>
+              <span class="grid size-7 shrink-0 place-items-center rounded-full bg-emerald-600 text-[10px] font-semibold text-white opacity-60">RJ</span>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-baseline justify-between gap-2"><p class="text-sm text-zinc-500">Rohan moved an issue to Done</p><span class="text-xs text-zinc-400">Yesterday</span></div>
+                <p class="mt-0.5 text-xs text-zinc-400"><span class="font-mono">WEB-11</span> · Column count doesn't update</p>
+              </div>
+            </div>
+            <div data-layer="Notification read" class="flex gap-3 border-b border-zinc-100 px-4 py-3">
+              <span class="size-2 shrink-0"></span>
+              <span class="grid size-7 shrink-0 place-items-center rounded-full bg-rose-500 text-[10px] font-semibold text-white opacity-60">PR</span>
+              <div class="min-w-0 flex-1">
+                <div class="flex items-baseline justify-between gap-2"><p class="text-sm text-zinc-500">Priya joined Acme</p><span class="text-xs text-zinc-400">2d</span></div>
+              </div>
+            </div>
+          </div>
+          <div data-layer="Preview" class="flex min-w-0 flex-1 flex-col">
+            <div class="flex h-12 shrink-0 items-center gap-1.5 border-b border-zinc-200 px-6 text-sm">
+              <span class="text-zinc-500">Web Team</span><svg class="size-3.5 text-zinc-400"><use href="#i-chevron-right"/></svg><span class="font-mono text-xs text-zinc-700">WEB-14</span>
+              <span class="ml-auto flex h-7 items-center rounded-md border border-zinc-300 px-2.5 text-xs font-medium text-zinc-700">Open issue</span>
+            </div>
+            <div class="px-10 py-8">
+              <h2 class="text-xl font-semibold tracking-tight">Issue detail side panel</h2>
+              <div class="mt-3 flex items-center gap-2 text-xs">
+                <span class="inline-flex h-6 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-zinc-700"><svg class="size-3 text-blue-500"><use href="#st-review"/></svg>In Review</span>
+                <span class="inline-flex h-6 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-zinc-700"><svg class="size-3 text-zinc-600"><use href="#pr-medium"/></svg>Medium</span>
+                <span class="inline-flex h-6 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-zinc-700"><span class="grid size-4 place-items-center rounded-full bg-rose-500 text-[8px] font-semibold text-white">PR</span>Priya Rao</span>
+              </div>
+              <p class="mt-5 max-w-[560px] text-sm leading-relaxed text-zinc-700">Clicking a card opens the issue in a panel over the board. The URL changes so the panel can be shared or opened in a new tab.</p>
+              <p class="mt-8 text-sm font-semibold">Activity</p>
+              <div data-layer="Comment mention" class="mt-3 max-w-[560px] rounded-lg border border-indigo-300 bg-white p-3 ring-4 ring-indigo-100">
+                <p class="flex items-center gap-2 text-xs"><span class="grid size-5 place-items-center rounded-full bg-rose-500 text-[9px] font-semibold text-white">PR</span><span class="font-medium text-zinc-900">Priya</span><span class="text-zinc-400">2 minutes ago</span></p>
+                <p class="mt-2 text-sm text-zinc-700"><span class="rounded bg-indigo-100 px-1 font-medium text-indigo-700">@Aarav</span> can you check the panel slide-in? It feels slow on the first open.</p>
+              </div>
+              <div data-layer="Reply box" class="mt-4 max-w-[560px] rounded-lg border border-zinc-300">
+                <div class="h-14 px-3 py-2 text-sm text-zinc-400">Reply…</div>
+                <div class="flex items-center justify-end gap-3 border-t border-zinc-100 px-2 py-1.5"><span class="flex h-7 items-center rounded-md bg-zinc-900 px-3 text-xs font-medium text-white">Reply</span></div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </section>
+    </div>
+  </figure>
+
+  <figure class="mx-auto w-fit">
+    <figcaption class="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1"><span class="font-mono text-xs text-zinc-400">14</span><span class="text-lg font-semibold">Members + account menu</span><code class="font-mono text-xs text-indigo-600">/acme/settings/members</code><span class="text-sm text-zinc-500">Tables, role-based UI (only admins get role dropdowns), a dropdown menu, and log out, which takes you back to 02.</span></figcaption>
+    <div class="screen-zoom overflow-hidden rounded-xl border border-zinc-300 shadow-sm">
+      <section data-screen="14 Members and log out" class="screen flex bg-white">
+        <div data-use="tpl-sidebar" data-active="settings"></div>
+        <main class="flex min-w-0 flex-1">
+          <nav data-layer="Settings nav" class="w-56 shrink-0 border-r border-zinc-200 px-3 py-6 text-sm">
+            <p class="px-2 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Workspace</p>
+            <div class="mt-1.5 space-y-0.5">
+              <p class="rounded-md px-2 py-1.5 text-zinc-600">General</p>
+              <p class="rounded-md bg-zinc-100 px-2 py-1.5 font-medium text-zinc-900">Members</p>
+              <p class="rounded-md px-2 py-1.5 text-zinc-600">Billing</p>
+            </div>
+            <p class="mt-6 px-2 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Teams</p>
+            <div class="mt-1.5 space-y-0.5"><p class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-600"><span class="grid size-4 place-items-center rounded bg-emerald-500 text-[8px] font-semibold text-white">W</span>Web Team</p></div>
+            <p class="mt-6 px-2 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Account</p>
+            <div class="mt-1.5 space-y-0.5"><p class="rounded-md px-2 py-1.5 text-zinc-600">Profile</p><p class="rounded-md px-2 py-1.5 text-zinc-600">Notifications</p></div>
+          </nav>
+          <div class="min-w-0 flex-1 px-12 py-10">
+            <h1 class="text-2xl font-semibold tracking-tight">Members</h1>
+            <p class="mt-1 text-sm text-zinc-500">Manage who has access to the Acme workspace.</p>
+            <div class="mt-8 flex items-center gap-3">
+              <span class="flex h-9 w-72 items-center gap-2 rounded-md border border-zinc-300 px-3 text-sm text-zinc-400"><svg class="size-4"><use href="#i-search"/></svg>Search by name or email</span>
+              <span data-layer="Button Invite" class="ml-auto inline-flex h-9 items-center gap-2 rounded-md bg-indigo-600 px-3.5 text-sm font-medium text-white shadow-sm"><svg class="size-4"><use href="#i-user-plus"/></svg>Invite people</span>
+            </div>
+            <div data-layer="Members table" class="mt-4 overflow-hidden rounded-lg border border-zinc-200">
+              <div class="grid grid-cols-[1.2fr_1.3fr_150px_150px_44px] items-center bg-zinc-50 px-4 py-2.5 text-xs font-medium text-zinc-500"><span>Name</span><span>Email</span><span>Role</span><span>Joined</span><span></span></div>
+              <div data-layer="Row Aarav" class="grid grid-cols-[1.2fr_1.3fr_150px_150px_44px] items-center border-t border-zinc-200 px-4 py-3 text-sm">
+                <span class="flex items-center gap-2.5"><span class="grid size-7 place-items-center rounded-full bg-indigo-500 text-[10px] font-semibold text-white">AK</span><span class="font-medium">Aarav Kapoor</span><span class="rounded bg-zinc-100 px-1.5 text-[11px] text-zinc-500">You</span></span>
+                <span class="text-zinc-600">aarav@acme.dev</span>
+                <span class="text-zinc-700">Admin</span>
+                <span class="text-zinc-500">Oct 4</span>
+                <span></span>
+              </div>
+              <div data-layer="Row Priya" class="grid grid-cols-[1.2fr_1.3fr_150px_150px_44px] items-center border-t border-zinc-200 px-4 py-3 text-sm">
+                <span class="flex items-center gap-2.5"><span class="grid size-7 place-items-center rounded-full bg-rose-500 text-[10px] font-semibold text-white">PR</span><span class="font-medium">Priya Rao</span></span>
+                <span class="text-zinc-600">priya@acme.dev</span>
+                <span><span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-700">Member<svg class="size-3 text-zinc-400"><use href="#i-chevron-down"/></svg></span></span>
+                <span class="text-zinc-500">Oct 4</span>
+                <span class="grid size-7 place-items-center text-zinc-400"><svg class="size-4"><use href="#i-more"/></svg></span>
+              </div>
+              <div data-layer="Row Rohan" class="grid grid-cols-[1.2fr_1.3fr_150px_150px_44px] items-center border-t border-zinc-200 px-4 py-3 text-sm">
+                <span class="flex items-center gap-2.5"><span class="grid size-7 place-items-center rounded-full bg-emerald-600 text-[10px] font-semibold text-white">RJ</span><span class="font-medium">Rohan Joshi</span></span>
+                <span class="text-zinc-600">rohan@acme.dev</span>
+                <span><span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-700">Member<svg class="size-3 text-zinc-400"><use href="#i-chevron-down"/></svg></span></span>
+                <span class="text-zinc-500">Oct 5</span>
+                <span class="grid size-7 place-items-center text-zinc-400"><svg class="size-4"><use href="#i-more"/></svg></span>
+              </div>
+              <div data-layer="Row Meera pending" class="grid grid-cols-[1.2fr_1.3fr_150px_150px_44px] items-center border-t border-zinc-200 px-4 py-3 text-sm">
+                <span class="flex items-center gap-2.5"><span class="grid size-7 place-items-center rounded-full border border-dashed border-zinc-300 text-[10px] font-semibold text-zinc-400">MS</span><span class="font-medium text-zinc-500">Meera Shah</span></span>
+                <span class="text-zinc-500">meera@acme.dev</span>
+                <span class="text-zinc-500">Member</span>
+                <span><span class="inline-flex h-6 items-center rounded-full bg-amber-50 px-2 text-xs font-medium text-amber-700 ring-1 ring-amber-200">Invite pending</span></span>
+                <span class="grid size-7 place-items-center text-zinc-400"><svg class="size-4"><use href="#i-more"/></svg></span>
+              </div>
+            </div>
+            <p class="mt-3 text-xs text-zinc-500">3 members · 1 pending invite</p>
+          </div>
+        </main>
+        <div data-layer="Account menu" class="absolute bottom-[62px] left-3 z-20 w-[220px] rounded-lg border border-zinc-200 bg-white p-1 text-sm shadow-xl">
+          <p class="px-2 py-1.5 text-xs text-zinc-500">aarav@acme.dev</p>
+          <p class="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-zinc-700"><svg class="size-4 text-zinc-500"><use href="#i-user"/></svg>Profile</p>
+          <p class="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-zinc-700"><svg class="size-4 text-zinc-500"><use href="#i-settings"/></svg>Settings</p>
+          <p class="flex items-center gap-2.5 rounded-md px-2 py-1.5 text-zinc-700"><svg class="size-4 text-zinc-500"><use href="#i-keyboard"/></svg>Keyboard shortcuts<kbd class="ml-auto rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">?</kbd></p>
+          <div class="my-1 h-px bg-zinc-200"></div>
+          <p class="flex items-center gap-2.5 rounded-md bg-red-50 px-2 py-1.5 font-medium text-red-600"><svg class="size-4"><use href="#i-logout"/></svg>Log out</p>
+        </div>
+      </section>
+    </div>
+  </figure>
+
+</main>
+
+<script>
+document.querySelectorAll('[data-use]').forEach(function (slot) {
+  var frag = document.getElementById(slot.dataset.use).content.cloneNode(true);
+  if (slot.dataset.active) {
+    var link = frag.querySelector('[data-nav="' + slot.dataset.active + '"]');
+    link.classList.remove('text-zinc-600');
+    link.classList.add('bg-zinc-200/70', 'font-medium', 'text-zinc-900');
+  }
+  if (slot.dataset.onboarding) frag.querySelector('[data-slot="getting-started"]').classList.remove('hidden');
+  if (slot.dataset.drag) frag.querySelector('[data-slot="drop-slot"]').classList.remove('hidden');
+  slot.replaceWith(frag);
+});
+</script>
+</body>
+</html>

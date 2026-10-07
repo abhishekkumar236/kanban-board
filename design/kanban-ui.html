@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kanban UI Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+</style>
+<style>
+  .callout{position:absolute;z-index:40;display:grid;place-items:center;width:20px;height:20px;border-radius:9999px;background:#db2777;color:#fff;font:600 11px/1 Inter,sans-serif;box-shadow:0 0 0 3px rgba(219,39,119,.22)}
+  .num{display:inline-grid;place-items:center;flex:none;width:18px;height:18px;margin-top:1px;border-radius:9999px;background:#db2777;color:#fff;font:600 10px/1 Inter,sans-serif}
+  .toggle-track{background:#d4d4d8}
+  .toggle-knob{transition:transform .15s}
+  #annotations:checked ~ .page .toggle-track{background:#db2777}
+  #annotations:checked ~ .page .toggle-knob{transform:translateX(14px)}
+  #annotations:not(:checked) ~ .page .callout{display:none}
+</style>
+</head>
+<body class="bg-zinc-100 font-sans text-zinc-900 antialiased">
+
+<input type="checkbox" id="annotations" class="sr-only" checked>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="st-backlog" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1.4 2"/></symbol>
+  <symbol id="st-todo" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="st-progress" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 3.5a3.5 3.5 0 0 1 0 7z" fill="currentColor"/></symbol>
+  <symbol id="st-review" viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 3.5a3.5 3.5 0 1 1-3.5 3.5H7z" fill="currentColor"/></symbol>
+  <symbol id="st-done" viewBox="0 0 14 14"><circle cx="7" cy="7" r="7" fill="currentColor"/><path d="M4.3 7.3l1.9 1.8 3.6-3.9" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="pr-urgent" viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="3" fill="currentColor"/><path d="M7 3.8v4" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><circle cx="7" cy="10.2" r="1" fill="#fff"/></symbol>
+  <symbol id="pr-high" viewBox="0 0 14 14"><g fill="currentColor"><rect x="1.5" y="8" width="2.6" height="4.5" rx=".8"/><rect x="5.7" y="5" width="2.6" height="7.5" rx=".8"/><rect x="9.9" y="2" width="2.6" height="10.5" rx=".8"/></g></symbol>
+  <symbol id="pr-medium" viewBox="0 0 14 14"><g fill="currentColor"><rect x="1.5" y="8" width="2.6" height="4.5" rx=".8"/><rect x="5.7" y="5" width="2.6" height="7.5" rx=".8"/><rect x="9.9" y="2" width="2.6" height="10.5" rx=".8" fill-opacity=".25"/></g></symbol>
+  <symbol id="pr-low" viewBox="0 0 14 14"><g fill="currentColor"><rect x="1.5" y="8" width="2.6" height="4.5" rx=".8"/><rect x="5.7" y="5" width="2.6" height="7.5" rx=".8" fill-opacity=".25"/><rect x="9.9" y="2" width="2.6" height="10.5" rx=".8" fill-opacity=".25"/></g></symbol>
+  <symbol id="pr-none" viewBox="0 0 14 14"><g fill="currentColor"><rect x="1.5" y="6.3" width="2.6" height="1.4" rx=".7"/><rect x="5.7" y="6.3" width="2.6" height="1.4" rx=".7"/><rect x="9.9" y="6.3" width="2.6" height="1.4" rx=".7"/></g></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></g></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></g></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M7 12h10M10 18h4"/></g></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><g fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></g></symbol>
+  <symbol id="i-comment" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></g></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></g></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></g></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M18.5 20a6.5 6.5 0 0 0-2.5-5.1"/></g></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></g></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></g></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 7v7M12 7v4M16 7v9"/></g></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></g></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></g></symbol>
+  <symbol id="i-grip" viewBox="0 0 24 24"><g fill="currentColor"><circle cx="9" cy="5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="5" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="15" cy="19" r="1.5"/></g></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></g></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></g></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 17v4M17 19h4"/></g></symbol>
+  <symbol id="i-loader" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></g></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></g></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3 4.7-5"/></g></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></g></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M18 6h2M4 18h4M12 18h8"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="18" r="2"/></g></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.2"/></g></symbol>
+  <symbol id="i-enter" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 10-5 5 5 5"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/></g></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></g></symbol>
+</svg>
+
+<div class="page">
+
+  <!-- Page header -->
+  <header class="mx-auto flex max-w-[1440px] flex-wrap items-end justify-between gap-4 px-6 pb-6 pt-10">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600">Linear-lite · UI reference</p>
+      <h1 class="mt-1 text-2xl font-semibold tracking-tight">Kanban board: screens &amp; states</h1>
+      <p class="mt-2 max-w-2xl text-sm leading-relaxed text-zinc-600">
+        A static mockup to build from. It is plain HTML with Tailwind classes, so you can copy any style straight into JSX.
+        Turning it into React components is your job. Pink numbers mark the behaviour each screen needs; the notes under each screen explain them.
+      </p>
+      <nav class="mt-4 flex flex-wrap gap-2 text-xs">
+        <a href="#board" class="rounded-full border border-zinc-300 bg-white px-3 py-1 text-zinc-700 hover:border-zinc-400">01 Board</a>
+        <a href="#issue" class="rounded-full border border-zinc-300 bg-white px-3 py-1 text-zinc-700 hover:border-zinc-400">02 Issue panel</a>
+        <a href="#dialogs" class="rounded-full border border-zinc-300 bg-white px-3 py-1 text-zinc-700 hover:border-zinc-400">03 New issue · 04 Command palette</a>
+        <a href="#states" class="rounded-full border border-zinc-300 bg-white px-3 py-1 text-zinc-700 hover:border-zinc-400">05 States</a>
+        <a href="#tokens" class="rounded-full border border-zinc-300 bg-white px-3 py-1 text-zinc-700 hover:border-zinc-400">06 Tokens</a>
+        <a href="#components" class="rounded-full border border-zinc-300 bg-white px-3 py-1 text-zinc-700 hover:border-zinc-400">07 Before you code</a>
+      </nav>
+    </div>
+    <label for="annotations" class="flex cursor-pointer select-none items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-700 shadow-xs">
+      <span class="toggle-track relative h-4 w-[30px] rounded-full"><span class="toggle-knob absolute left-0.5 top-0.5 size-3 rounded-full bg-white shadow"></span></span>
+      Show annotations
+    </label>
+  </header>
+
+  <!-- ============================================================ 01 BOARD -->
+  <section id="board" class="mx-auto max-w-[1440px] px-6 pb-16">
+    <div class="mb-3 flex items-baseline gap-3"><span class="font-mono text-xs text-zinc-400">01</span><h2 class="text-lg font-semibold">Board view</h2></div>
+
+    <div class="overflow-x-auto rounded-xl border border-zinc-200 bg-white shadow-sm">
+      <div class="min-w-[1200px]">
+
+        <!-- browser bar -->
+        <div class="flex items-center gap-4 border-b border-zinc-200 bg-zinc-50 px-4 py-2.5">
+          <div class="flex gap-1.5"><span class="size-3 rounded-full bg-zinc-300"></span><span class="size-3 rounded-full bg-zinc-300"></span><span class="size-3 rounded-full bg-zinc-300"></span></div>
+          <div class="relative w-full max-w-xl rounded-md border border-zinc-200 bg-white px-3 py-1 font-mono text-xs text-zinc-500">
+            linear-lite.app/web/board<span class="text-indigo-600">?project=linear-lite-v1&amp;view=board</span>
+            <span class="callout -right-2.5 -top-2.5">1</span>
+          </div>
+        </div>
+
+        <div class="relative flex h-[720px]">
+
+          <!-- Sidebar -->
+          <aside class="flex w-52 shrink-0 flex-col border-r border-zinc-200 bg-zinc-50/70">
+            <div class="px-2 pt-3">
+              <button class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 hover:bg-zinc-200/60">
+                <span class="grid size-5 place-items-center rounded bg-indigo-600 text-[10px] font-bold text-white">LL</span>
+                <span class="text-sm font-semibold">Linear-lite</span>
+                <svg class="size-3.5 text-zinc-400"><use href="#i-chevron-down"/></svg>
+              </button>
+            </div>
+            <div class="px-3 pt-2">
+              <button class="flex w-full items-center gap-2 rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-sm text-zinc-500 shadow-xs hover:border-zinc-300">
+                <svg class="size-4"><use href="#i-search"/></svg>Search
+                <kbd class="ml-auto rounded border border-zinc-200 bg-zinc-50 px-1.5 font-mono text-[10px] text-zinc-500">⌘K</kbd>
+              </button>
+            </div>
+            <nav class="mt-3 space-y-0.5 px-2 text-sm">
+              <a class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-700 hover:bg-zinc-200/60"><svg class="size-4 text-zinc-500"><use href="#i-inbox"/></svg>Inbox<span class="ml-auto rounded-full bg-indigo-600 px-1.5 text-[10px] font-semibold leading-4 text-white">3</span></a>
+              <a class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-700 hover:bg-zinc-200/60"><svg class="size-4 text-zinc-500"><use href="#i-user"/></svg>My issues</a>
+            </nav>
+
+            <p class="mt-5 px-4 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Your teams</p>
+            <div class="mt-1 px-2 text-sm">
+              <button class="flex w-full items-center gap-2 rounded-md px-2 py-1.5 font-medium text-zinc-800 hover:bg-zinc-200/60">
+                <span class="grid size-5 place-items-center rounded bg-emerald-500 text-[10px] font-semibold text-white">W</span>Web Team
+                <svg class="ml-auto size-3.5 text-zinc-400"><use href="#i-chevron-down"/></svg>
+              </button>
+              <div class="ml-4 mt-0.5 space-y-0.5 border-l border-zinc-200 pl-2">
+                <a class="flex items-center gap-2 rounded-md bg-zinc-200/70 px-2 py-1.5 font-medium text-zinc-900"><svg class="size-4 text-zinc-600"><use href="#i-board"/></svg>Board</a>
+                <a class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-600 hover:bg-zinc-200/60"><svg class="size-4 text-zinc-500"><use href="#i-layers"/></svg>All issues</a>
+                <a class="flex items-center gap-2 rounded-md px-2 py-1.5 text-zinc-600 hover:bg-zinc-200/60"><svg class="size-4 text-zinc-500"><use href="#i-users"/></svg>Members</a>
+              </div>
+            </div>
+
+            <p class="mt-5 px-4 text-[11px] font-semibold uppercase tracking-wider text-zinc-400">Projects</p>
+            <nav class="mt-1 space-y-0.5 px-2 text-sm text-zinc-600">
+              <a class="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-zinc-200/60"><span class="size-2 rounded-sm bg-violet-500"></span>Linear-lite v1</a>
+              <a class="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-zinc-200/60"><span class="size-2 rounded-sm bg-sky-500"></span>Marketing site</a>
+              <a class="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-zinc-200/60"><span class="size-2 rounded-sm bg-orange-500"></span>Mobile app</a>
+            </nav>
+
+            <div class="mt-auto flex items-center gap-2.5 border-t border-zinc-200 px-4 py-3">
+              <span class="grid size-7 place-items-center rounded-full bg-indigo-500 text-[11px] font-semibold text-white">AK</span>
+              <div class="leading-tight"><p class="text-sm font-medium">Aarav Kapoor</p><p class="text-xs text-zinc-500">aarav@team.dev</p></div>
+            </div>
+          </aside>
+
+          <!-- Main -->
+          <main class="flex min-w-0 flex-1 flex-col">
+            <header class="flex h-12 shrink-0 items-center gap-3 border-b border-zinc-200 px-4">
+              <nav class="flex items-center gap-1.5 text-sm"><span class="text-zinc-500">Web Team</span><svg class="size-3.5 text-zinc-400"><use href="#i-chevron-right"/></svg><span class="font-medium">Board</span></nav>
+              <div class="ml-auto flex items-center gap-3">
+                <div class="relative flex items-center gap-2">
+                  <div class="flex -space-x-1.5">
+                    <span class="relative grid size-6 place-items-center rounded-full bg-rose-500 text-[10px] font-semibold text-white ring-2 ring-white">PR<span class="absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-emerald-500 ring-2 ring-white"></span></span>
+                    <span class="relative grid size-6 place-items-center rounded-full bg-emerald-600 text-[10px] font-semibold text-white ring-2 ring-white">RJ<span class="absolute -bottom-0.5 -right-0.5 size-2 rounded-full bg-emerald-500 ring-2 ring-white"></span></span>
+                  </div>
+                  <span class="text-xs text-zinc-500">2 others viewing</span>
+                  <span class="callout -right-4 -top-3">2</span>
+                </div>
+                <button class="grid size-8 place-items-center rounded-md text-zinc-500 hover:bg-zinc-100"><svg class="size-4"><use href="#i-bell"/></svg></button>
+                <button class="inline-flex h-8 items-center gap-1.5 rounded-md bg-indigo-600 px-3 text-sm font-medium text-white shadow-sm hover:bg-indigo-500">
+                  <svg class="size-4"><use href="#i-plus"/></svg>New issue<kbd class="ml-1 rounded bg-indigo-500 px-1 font-mono text-[10px]">C</kbd>
+                </button>
+              </div>
+            </header>
+
+            <div class="flex h-11 shrink-0 items-center gap-2 border-b border-zinc-200 px-4">
+              <div class="inline-flex rounded-md border border-zinc-200 bg-zinc-50 p-0.5 text-xs">
+                <button class="inline-flex items-center gap-1.5 rounded bg-white px-2 py-1 font-medium shadow-xs"><svg class="size-3.5"><use href="#i-board"/></svg>Board</button>
+                <button class="inline-flex items-center gap-1.5 rounded px-2 py-1 text-zinc-500 hover:text-zinc-800"><svg class="size-3.5"><use href="#i-list"/></svg>List</button>
+              </div>
+              <span class="mx-1 h-5 w-px bg-zinc-200"></span>
+              <button class="inline-flex h-7 items-center gap-1.5 rounded-md px-2 text-xs text-zinc-600 hover:bg-zinc-100"><svg class="size-3.5"><use href="#i-filter"/></svg>Filter</button>
+              <span class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 bg-white pl-2 pr-1 text-xs">
+                <span class="text-zinc-500">Project is</span><span class="size-2 rounded-sm bg-violet-500"></span><span class="font-medium">Linear-lite v1</span>
+                <button class="grid size-5 place-items-center rounded text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700"><svg class="size-3"><use href="#i-x"/></svg></button>
+              </span>
+              <div class="ml-auto flex items-center gap-2">
+                <label class="flex h-7 w-56 items-center gap-2 rounded-md border border-zinc-200 px-2 text-xs text-zinc-400"><svg class="size-3.5"><use href="#i-search"/></svg>Search issues…</label>
+                <button class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-600 hover:bg-zinc-50"><svg class="size-3.5"><use href="#i-sliders"/></svg>Display</button>
+              </div>
+            </div>
+
+            <!-- Board columns -->
+            <div class="relative flex flex-1 gap-3 overflow-x-auto bg-white p-4">
+
+              <!-- Backlog -->
+              <section class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+                <header class="flex items-center gap-2 px-3 py-2.5">
+                  <svg class="size-3.5 text-zinc-400"><use href="#st-backlog"/></svg>
+                  <h3 class="text-sm font-medium">Backlog</h3><span class="text-xs text-zinc-400">4</span>
+                  <div class="ml-auto flex">
+                    <button class="grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700"><svg class="size-4"><use href="#i-more"/></svg></button>
+                    <button class="grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700"><svg class="size-4"><use href="#i-plus"/></svg></button>
+                  </div>
+                </header>
+                <div class="flex flex-col gap-2 px-2 pb-2">
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs hover:border-zinc-300 hover:shadow-sm">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-21</span><span class="size-5 rounded-full border border-dashed border-zinc-300"></span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Command palette (⌘K) for quick navigation</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-low"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span>
+                    </div>
+                  </article>
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs hover:border-zinc-300 hover:shadow-sm">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-22</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Respect the system dark mode setting</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-400"><svg class="size-3"><use href="#pr-none"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+                    </div>
+                  </article>
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs hover:border-zinc-300 hover:shadow-sm">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-24</span><span class="size-5 rounded-full border border-dashed border-zinc-300"></span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Keyboard shortcuts to change status (1–5)</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span>
+                      <span class="ml-auto flex items-center gap-2 text-[11px] text-zinc-400"><span class="inline-flex items-center gap-0.5"><svg class="size-3"><use href="#i-comment"/></svg>1</span></span>
+                    </div>
+                  </article>
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs hover:border-zinc-300 hover:shadow-sm">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-25</span><span class="size-5 rounded-full border border-dashed border-zinc-300"></span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Summarize long comment threads with AI</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-low"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-fuchsia-500"></span>AI</span>
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <!-- Todo -->
+              <section class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+                <header class="flex items-center gap-2 px-3 py-2.5">
+                  <svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg>
+                  <h3 class="text-sm font-medium">Todo</h3><span class="text-xs text-zinc-400">2</span>
+                  <div class="ml-auto flex">
+                    <button class="grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700"><svg class="size-4"><use href="#i-more"/></svg></button>
+                    <button class="grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700"><svg class="size-4"><use href="#i-plus"/></svg></button>
+                  </div>
+                </header>
+                <div class="flex flex-col gap-2 px-2 pb-2">
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs hover:border-zinc-300 hover:shadow-sm">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-17</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Validate the new-issue form with zod</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+                      <span class="ml-auto flex items-center gap-2 text-[11px] text-zinc-400"><span class="inline-flex items-center gap-0.5"><svg class="size-3"><use href="#i-calendar"/></svg>Oct 16</span></span>
+                    </div>
+                  </article>
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs hover:border-zinc-300 hover:shadow-sm">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-18</span><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Roll a card back if its move fails to save</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+                      <span class="ml-auto flex items-center gap-2 text-[11px] text-zinc-400"><span class="inline-flex items-center gap-0.5"><svg class="size-3"><use href="#i-comment"/></svg>3</span></span>
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <!-- In Progress -->
+              <section class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+                <header class="flex items-center gap-2 px-3 py-2.5">
+                  <svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg>
+                  <h3 class="text-sm font-medium">In Progress</h3><span class="text-xs text-zinc-400">3</span>
+                  <div class="ml-auto flex">
+                    <button class="grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700"><svg class="size-4"><use href="#i-more"/></svg></button>
+                    <button class="grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700"><svg class="size-4"><use href="#i-plus"/></svg></button>
+                  </div>
+                </header>
+                <div class="flex flex-col gap-2 px-2 pb-2">
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs hover:border-zinc-300 hover:shadow-sm">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-12</span><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Drag and drop cards between columns</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-orange-500"><svg class="size-3"><use href="#pr-urgent"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span>
+                      <span class="ml-auto flex items-center gap-2 text-[11px] text-zinc-400"><span class="inline-flex items-center gap-0.5"><svg class="size-3"><use href="#i-comment"/></svg>4</span><span class="inline-flex items-center gap-0.5 text-amber-600"><svg class="size-3"><use href="#i-calendar"/></svg>Oct 9</span></span>
+                    </div>
+                  </article>
+
+                  <!-- drop placeholder -->
+                  <div class="h-[104px] rounded-lg border-2 border-dashed border-indigo-300 bg-indigo-50/70"></div>
+
+                  <!-- optimistic / saving -->
+                  <article class="relative rounded-lg border border-zinc-200 bg-white p-3">
+                    <div class="opacity-60">
+                      <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-16</span><span class="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-500"><svg class="size-3 animate-spin"><use href="#i-loader"/></svg>Saving…</span></div>
+                      <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Optimistic update when a card moves</p>
+                      <div class="mt-3 flex items-center gap-1.5">
+                        <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span>
+                        <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+                      </div>
+                    </div>
+                    <span class="callout -left-2 -top-2">4</span>
+                  </article>
+
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs hover:border-zinc-300 hover:shadow-sm">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-13</span><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Live sync across tabs over WebSocket</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-teal-500"></span>Infra</span>
+                      <span class="ml-auto flex items-center gap-2 text-[11px] text-zinc-400"><span class="inline-flex items-center gap-0.5"><svg class="size-3"><use href="#i-comment"/></svg>2</span></span>
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <!-- In Review -->
+              <section class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+                <header class="flex items-center gap-2 px-3 py-2.5">
+                  <svg class="size-3.5 text-blue-500"><use href="#st-review"/></svg>
+                  <h3 class="text-sm font-medium">In Review</h3><span class="text-xs text-zinc-400">2</span>
+                  <div class="ml-auto flex">
+                    <button class="grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700"><svg class="size-4"><use href="#i-more"/></svg></button>
+                    <button class="grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700"><svg class="size-4"><use href="#i-plus"/></svg></button>
+                  </div>
+                </header>
+                <div class="flex flex-col gap-2 px-2 pb-2">
+                  <article class="relative rounded-lg border border-indigo-300 bg-white p-3 shadow-sm ring-4 ring-indigo-100">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-14</span><span class="grid size-5 place-items-center rounded-full bg-rose-500 text-[9px] font-semibold text-white">PR</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Issue detail side panel</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span>
+                    </div>
+                    <p class="mt-2.5 flex items-center gap-1.5 border-t border-zinc-100 pt-2 text-[11px] text-indigo-600">
+                      <span class="relative flex size-1.5"><span class="absolute inline-flex size-full animate-ping rounded-full bg-indigo-400 opacity-75"></span><span class="relative inline-flex size-1.5 rounded-full bg-indigo-500"></span></span>
+                      Priya moved this · just now
+                    </p>
+                    <span class="callout -right-2 -top-2">5</span>
+                  </article>
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs hover:border-zinc-300 hover:shadow-sm">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-11</span><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Column count doesn't update after deleting an issue</p>
+                    <div class="mt-3 flex items-center gap-1.5">
+                      <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span>
+                      <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-red-500"></span>Bug</span>
+                      <span class="ml-auto flex items-center gap-2 text-[11px] text-zinc-400"><span class="inline-flex items-center gap-0.5"><svg class="size-3"><use href="#i-comment"/></svg>1</span></span>
+                    </div>
+                  </article>
+                </div>
+              </section>
+
+              <!-- Done -->
+              <section class="flex w-64 shrink-0 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+                <header class="flex items-center gap-2 px-3 py-2.5">
+                  <svg class="size-3.5 text-emerald-500"><use href="#st-done"/></svg>
+                  <h3 class="text-sm font-medium">Done</h3><span class="text-xs text-zinc-400">3</span>
+                  <div class="ml-auto flex">
+                    <button class="grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700"><svg class="size-4"><use href="#i-more"/></svg></button>
+                  </div>
+                </header>
+                <div class="flex flex-col gap-2 px-2 pb-2">
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-3</span><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-500">Email + password login</p>
+                  </article>
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-5</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-500">Board layout with static data</p>
+                  </article>
+                  <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+                    <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-8</span><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span></div>
+                    <p class="mt-1 text-sm font-medium leading-snug text-zinc-500">Seed script with sample issues</p>
+                  </article>
+                </div>
+              </section>
+
+              <!-- Card being dragged (floats above the board) -->
+              <article class="absolute left-[574px] top-[172px] z-10 w-[240px] rotate-[2.5deg] cursor-grabbing rounded-lg border border-indigo-200 bg-white p-3 shadow-2xl ring-1 ring-indigo-100">
+                <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-15</span><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span></div>
+                <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Keep board filters in the URL</p>
+                <div class="mt-3 flex items-center gap-1.5">
+                  <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span>
+                  <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+                  <span class="ml-auto flex items-center gap-2 text-[11px] text-zinc-400"><span class="inline-flex items-center gap-0.5"><svg class="size-3"><use href="#i-calendar"/></svg>Oct 14</span></span>
+                </div>
+                <span class="callout -right-2 -top-2">3</span>
+              </article>
+            </div>
+          </main>
+
+          <!-- Toast -->
+          <div class="absolute bottom-4 right-4 z-20 flex w-80 items-start gap-3 rounded-lg border border-zinc-200 bg-white p-3 shadow-lg">
+            <span class="grid size-6 shrink-0 place-items-center rounded-full bg-rose-500 text-[10px] font-semibold text-white">PR</span>
+            <div class="text-sm">
+              <p class="text-zinc-700"><span class="font-medium text-zinc-900">Priya</span> moved <span class="font-mono text-xs">LL-14</span> to <span class="inline-flex items-center gap-1 font-medium text-zinc-900"><svg class="size-3 text-blue-500"><use href="#st-review"/></svg>In Review</span></p>
+              <p class="mt-0.5 text-xs text-zinc-500">just now</p>
+            </div>
+            <button class="ml-auto text-zinc-400 hover:text-zinc-700"><svg class="size-4"><use href="#i-x"/></svg></button>
+            <span class="callout -left-2 -top-2">6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ol class="mt-5 grid gap-x-10 gap-y-3 text-sm leading-relaxed text-zinc-600 md:grid-cols-2">
+      <li class="flex gap-2.5"><span class="num">1</span><span><b class="font-medium text-zinc-900">Filters live in the URL.</b> Read them from <code class="font-mono text-xs">searchParams</code>. A copied link then opens the exact same view, and the browser back button undoes a filter change.</span></li>
+      <li class="flex gap-2.5"><span class="num">2</span><span><b class="font-medium text-zinc-900">Presence.</b> Shows who else has this board open. It comes from your WebSocket server, which is the part you already know how to build.</span></li>
+      <li class="flex gap-2.5"><span class="num">3</span><span><b class="font-medium text-zinc-900">Dragging.</b> The card follows the pointer, and the dashed slot shows where it will land. Use the <code class="font-mono text-xs">dnd-kit</code> library; don't build dragging from scratch.</span></li>
+      <li class="flex gap-2.5"><span class="num">4</span><span><b class="font-medium text-zinc-900">Optimistic update.</b> The card moves the moment it's dropped and shows "Saving…" until the server confirms. If the save fails, it moves back (see 05 → Save failed).</span></li>
+      <li class="flex gap-2.5"><span class="num">5</span><span><b class="font-medium text-zinc-900">Live update.</b> A teammate's change arrives over the socket. Highlight the card for a few seconds so people notice it moved.</span></li>
+      <li class="flex gap-2.5"><span class="num">6</span><span><b class="font-medium text-zinc-900">Toast.</b> Says what changed and who did it. It closes on its own after about 5 seconds.</span></li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ 02 ISSUE PANEL -->
+  <section id="issue" class="mx-auto max-w-[1440px] px-6 pb-16">
+    <div class="mb-3 flex items-baseline gap-3"><span class="font-mono text-xs text-zinc-400">02</span><h2 class="text-lg font-semibold">Issue detail panel</h2><span class="text-sm text-zinc-500">opens when you click a card</span></div>
+
+    <div class="overflow-x-auto rounded-xl border border-zinc-200 shadow-sm">
+      <div class="relative flex h-[700px] min-w-[1100px] gap-3 bg-white p-4">
+        <!-- faded board behind -->
+        <div class="w-56 space-y-2 rounded-xl bg-zinc-50 p-2 ring-1 ring-zinc-200/70"><div class="h-5 w-24 rounded bg-zinc-200"></div><div class="h-24 rounded-lg bg-white ring-1 ring-zinc-200"></div><div class="h-24 rounded-lg bg-white ring-1 ring-zinc-200"></div><div class="h-24 rounded-lg bg-white ring-1 ring-zinc-200"></div></div>
+        <div class="w-56 space-y-2 rounded-xl bg-zinc-50 p-2 ring-1 ring-zinc-200/70"><div class="h-5 w-16 rounded bg-zinc-200"></div><div class="h-24 rounded-lg bg-white ring-1 ring-zinc-200"></div><div class="h-24 rounded-lg bg-white ring-1 ring-zinc-200"></div></div>
+        <div class="w-56 space-y-2 rounded-xl bg-zinc-50 p-2 ring-1 ring-zinc-200/70"><div class="h-5 w-20 rounded bg-zinc-200"></div><div class="h-24 rounded-lg bg-white ring-1 ring-zinc-200"></div><div class="h-24 rounded-lg bg-white ring-1 ring-zinc-200"></div><div class="h-24 rounded-lg bg-white ring-1 ring-zinc-200"></div></div>
+        <div class="absolute inset-0 bg-zinc-900/25"></div>
+
+        <!-- side panel -->
+        <aside class="absolute inset-y-0 right-0 flex w-[780px] border-l border-zinc-200 bg-white shadow-2xl">
+          <div class="flex min-w-0 flex-1 flex-col">
+            <div class="flex h-12 shrink-0 items-center gap-1.5 border-b border-zinc-200 px-5 text-sm">
+              <span class="text-zinc-500">Web Team</span><svg class="size-3.5 text-zinc-400"><use href="#i-chevron-right"/></svg><span class="font-mono text-xs text-zinc-700">LL-12</span>
+              <div class="ml-auto flex items-center gap-0.5 text-zinc-500">
+                <button class="grid size-7 place-items-center rounded-md hover:bg-zinc-100"><svg class="size-4"><use href="#i-link"/></svg></button>
+                <button class="grid size-7 place-items-center rounded-md hover:bg-zinc-100"><svg class="size-4"><use href="#i-more"/></svg></button>
+                <button class="grid size-7 place-items-center rounded-md hover:bg-zinc-100"><svg class="size-4"><use href="#i-x"/></svg></button>
+              </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-8 py-6">
+              <div class="relative">
+                <h3 class="-mx-2 rounded-md px-2 py-1 text-xl font-semibold tracking-tight hover:bg-zinc-50">Drag and drop cards between columns</h3>
+                <span class="callout -left-6 top-1.5">1</span>
+              </div>
+              <div class="mt-3 space-y-3 text-sm leading-relaxed text-zinc-700">
+                <p>Users should be able to move a card to another column by dragging it. The card moves straight away and we save in the background.</p>
+                <p class="font-medium text-zinc-900">Acceptance criteria</p>
+                <ul class="space-y-1.5">
+                  <li class="flex items-center gap-2"><span class="grid size-4 place-items-center rounded bg-indigo-600 text-white"><svg class="size-3"><use href="#i-check"/></svg></span><span class="text-zinc-500 line-through">Card follows the pointer while dragging</span></li>
+                  <li class="flex items-center gap-2"><span class="grid size-4 place-items-center rounded bg-indigo-600 text-white"><svg class="size-3"><use href="#i-check"/></svg></span><span class="text-zinc-500 line-through">Dashed slot shows where it will land</span></li>
+                  <li class="flex items-center gap-2"><span class="size-4 rounded border border-zinc-300"></span>Status saves after drop (optimistic)</li>
+                  <li class="flex items-center gap-2"><span class="size-4 rounded border border-zinc-300"></span>If saving fails, card moves back and an error toast shows</li>
+                  <li class="flex items-center gap-2"><span class="size-4 rounded border border-zinc-300"></span>Works with the keyboard (space to pick up, arrows to move)</li>
+                </ul>
+              </div>
+
+              <div class="mt-8 flex items-center justify-between">
+                <h4 class="text-sm font-semibold">Activity</h4>
+                <div class="relative">
+                  <button class="inline-flex h-7 items-center gap-1.5 rounded-md border border-fuchsia-200 bg-fuchsia-50 px-2 text-xs font-medium text-fuchsia-700 hover:bg-fuchsia-100"><svg class="size-3.5"><use href="#i-sparkles"/></svg>Summarize thread</button>
+                  <span class="callout -right-3 -top-3">2</span>
+                </div>
+              </div>
+              <ol class="mt-4 space-y-4">
+                <li class="flex items-center gap-2 text-xs text-zinc-500"><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span><b class="font-medium text-zinc-700">Aarav</b> created the issue<span class="text-zinc-400">· 3 days ago</span></li>
+                <li class="flex items-center gap-2 text-xs text-zinc-500"><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span><b class="font-medium text-zinc-700">Rohan</b> changed priority from <svg class="size-3 text-zinc-600"><use href="#pr-high"/></svg>High to <svg class="size-3 text-orange-500"><use href="#pr-urgent"/></svg>Urgent<span class="text-zinc-400">· 2 days ago</span></li>
+                <li class="rounded-lg border border-zinc-200 p-3">
+                  <div class="flex items-center gap-2 text-xs"><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span><b class="font-medium text-zinc-900">Rohan</b><span class="text-zinc-400">yesterday</span></div>
+                  <p class="mt-2 text-sm text-zinc-700">dnd-kit supports dragging with the keyboard out of the box. Worth using instead of the browser's built-in drag API.</p>
+                </li>
+                <li class="rounded-lg border border-zinc-200 p-3">
+                  <div class="flex items-center gap-2 text-xs"><span class="grid size-5 place-items-center rounded-full bg-rose-500 text-[9px] font-semibold text-white">PR</span><b class="font-medium text-zinc-900">Priya</b><span class="text-zinc-400">2 hours ago</span></div>
+                  <p class="mt-2 text-sm text-zinc-700">Can we flash the card when someone else moves it? It's easy to miss otherwise.</p>
+                </li>
+                <li class="flex items-center gap-2 text-xs text-zinc-500"><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span><b class="font-medium text-zinc-700">Aarav</b> moved from <svg class="size-3 text-zinc-500"><use href="#st-todo"/></svg>Todo to <svg class="size-3 text-amber-500"><use href="#st-progress"/></svg>In Progress<span class="text-zinc-400">· 1 hour ago</span></li>
+              </ol>
+              <div class="mt-5 rounded-lg border border-zinc-300 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100">
+                <textarea rows="3" placeholder="Leave a comment…" class="block w-full resize-none rounded-t-lg px-3 py-2 text-sm outline-none placeholder:text-zinc-400"></textarea>
+                <div class="flex items-center justify-end gap-3 border-t border-zinc-100 px-2 py-1.5"><span class="text-[11px] text-zinc-400">⌘↵ to send</span><button class="h-7 rounded-md bg-zinc-900 px-3 text-xs font-medium text-white hover:bg-zinc-700">Comment</button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- properties -->
+          <div class="w-60 shrink-0 border-l border-zinc-200 bg-zinc-50/60 px-3 py-5">
+            <dl class="space-y-1 text-sm">
+              <div class="relative grid grid-cols-[72px_1fr] items-center gap-1">
+                <dt class="pl-1 text-xs text-zinc-500">Status</dt>
+                <dd class="relative">
+                  <button class="flex w-full items-center gap-2 rounded-md bg-zinc-200/70 px-2 py-1"><svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg>In Progress</button>
+                  <!-- open dropdown -->
+                  <div class="absolute right-0 top-full z-10 mt-1 w-44 whitespace-nowrap rounded-lg border border-zinc-200 bg-white p-1 shadow-lg">
+                    <div class="flex items-center gap-2 rounded px-2 py-1.5 text-zinc-700 hover:bg-zinc-100"><svg class="size-3.5 text-zinc-400"><use href="#st-backlog"/></svg>Backlog<span class="ml-auto font-mono text-[10px] text-zinc-400">1</span></div>
+                    <div class="flex items-center gap-2 rounded px-2 py-1.5 text-zinc-700 hover:bg-zinc-100"><svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg>Todo<span class="ml-auto font-mono text-[10px] text-zinc-400">2</span></div>
+                    <div class="flex items-center gap-2 rounded bg-zinc-100 px-2 py-1.5 font-medium text-zinc-900"><svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg>In Progress<svg class="ml-auto size-3.5 text-indigo-600"><use href="#i-check"/></svg></div>
+                    <div class="flex items-center gap-2 rounded px-2 py-1.5 text-zinc-700 hover:bg-zinc-100"><svg class="size-3.5 text-blue-500"><use href="#st-review"/></svg>In Review<span class="ml-auto font-mono text-[10px] text-zinc-400">4</span></div>
+                    <div class="flex items-center gap-2 rounded px-2 py-1.5 text-zinc-700 hover:bg-zinc-100"><svg class="size-3.5 text-emerald-500"><use href="#st-done"/></svg>Done<span class="ml-auto font-mono text-[10px] text-zinc-400">5</span></div>
+                  </div>
+                  <span class="callout -right-2 -top-2.5">3</span>
+                </dd>
+              </div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><dt class="pl-1 text-xs text-zinc-500">Priority</dt><dd><button class="flex w-full items-center gap-2 rounded-md px-2 py-1 hover:bg-zinc-200/60"><svg class="size-3.5 text-orange-500"><use href="#pr-urgent"/></svg>Urgent</button></dd></div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><dt class="pl-1 text-xs text-zinc-500">Assignee</dt><dd><button class="flex w-full items-center gap-2 rounded-md px-2 py-1 hover:bg-zinc-200/60"><span class="grid size-4 place-items-center rounded-full bg-indigo-500 text-[8px] font-semibold text-white">AK</span>Aarav Kapoor</button></dd></div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><dt class="pl-1 text-xs text-zinc-500">Labels</dt><dd class="flex items-center gap-1 px-2 py-1"><span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 bg-white px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-violet-500"></span>Feature</span><button class="grid size-5 place-items-center rounded text-zinc-400 hover:bg-zinc-200/60"><svg class="size-3"><use href="#i-plus"/></svg></button></dd></div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><dt class="pl-1 text-xs text-zinc-500">Project</dt><dd><button class="flex w-full items-center gap-2 rounded-md px-2 py-1 hover:bg-zinc-200/60"><span class="size-2 rounded-sm bg-violet-500"></span>Linear-lite v1</button></dd></div>
+              <div class="grid grid-cols-[72px_1fr] items-center gap-1"><dt class="pl-1 text-xs text-zinc-500">Due date</dt><dd><button class="flex w-full items-center gap-2 rounded-md px-2 py-1 text-amber-700 hover:bg-zinc-200/60"><svg class="size-3.5"><use href="#i-calendar"/></svg>Oct 9 <span class="text-xs text-amber-600">· in 2 days</span></button></dd></div>
+            </dl>
+            <div class="mt-6 space-y-1 border-t border-zinc-200 px-1 pt-4 text-xs text-zinc-500">
+              <p>Created Oct 4 by Aarav</p>
+              <p>Updated 1 hour ago</p>
+            </div>
+          </div>
+          <span class="callout -left-2.5 top-3">4</span>
+        </aside>
+      </div>
+    </div>
+
+    <ol class="mt-5 grid gap-x-10 gap-y-3 text-sm leading-relaxed text-zinc-600 md:grid-cols-2">
+      <li class="flex gap-2.5"><span class="num">1</span><span><b class="font-medium text-zinc-900">Edit in place.</b> Click the title or description to edit it, and save when the field loses focus. There is no separate "edit" screen.</span></li>
+      <li class="flex gap-2.5"><span class="num">2</span><span><b class="font-medium text-zinc-900">The AI feature.</b> Streams a short summary of the comments into the activity list. Add it last, once everything else works.</span></li>
+      <li class="flex gap-2.5"><span class="num">3</span><span><b class="font-medium text-zinc-900">Every property is a dropdown.</b> Changing the status here must also move the card on the board behind it. Both read the same cached data, so you update it in one place.</span></li>
+      <li class="flex gap-2.5"><span class="num">4</span><span><b class="font-medium text-zinc-900">It has its own URL</b> (<code class="font-mono text-xs">/web/issue/LL-12</code>), so you can share it. In Next.js, "show this over the board but give it its own URL" is done with <i>intercepting routes</i> plus <i>parallel routes</i>.</span></li>
+    </ol>
+  </section>
+
+  <!-- ============================================================ 03 + 04 DIALOGS -->
+  <section id="dialogs" class="mx-auto grid max-w-[1440px] gap-x-6 gap-y-10 px-6 pb-16 lg:grid-cols-2">
+
+    <!-- 03 New issue -->
+    <div>
+      <div class="mb-3 flex items-baseline gap-3"><span class="font-mono text-xs text-zinc-400">03</span><h2 class="text-lg font-semibold">New issue dialog</h2></div>
+      <div class="relative grid h-[460px] place-items-center overflow-hidden rounded-xl border border-zinc-200 bg-zinc-300/60 p-6 shadow-sm">
+        <div class="relative w-full max-w-[540px] rounded-xl border border-zinc-200 bg-white shadow-2xl">
+          <div class="flex items-center gap-1.5 px-4 pt-3 text-xs text-zinc-500">
+            <span class="grid size-4 place-items-center rounded bg-emerald-500 text-[9px] font-semibold text-white">W</span>Web Team<svg class="size-3 text-zinc-400"><use href="#i-chevron-right"/></svg>New issue
+            <button class="ml-auto grid size-6 place-items-center rounded text-zinc-400 hover:bg-zinc-100"><svg class="size-4"><use href="#i-x"/></svg></button>
+          </div>
+          <div class="relative px-4 pt-3">
+            <input placeholder="Issue title" class="w-full rounded-md border border-red-300 bg-red-50/40 px-2.5 py-2 text-base font-medium outline-none ring-2 ring-red-100 placeholder:text-zinc-400">
+            <p class="mt-1.5 flex items-center gap-1 text-xs text-red-600"><svg class="size-3.5"><use href="#i-alert"/></svg>Title is required</p>
+            <textarea rows="4" placeholder="Add description…" class="mt-3 w-full resize-none px-0.5 text-sm outline-none placeholder:text-zinc-400"></textarea>
+            <span class="callout -right-1 top-1">1</span>
+          </div>
+          <div class="relative flex flex-wrap gap-1.5 px-4 pb-3">
+            <button class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-700 hover:bg-zinc-50"><svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg>Todo</button>
+            <button class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-500 hover:bg-zinc-50"><svg class="size-3.5"><use href="#pr-none"/></svg>Priority</button>
+            <button class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-500 hover:bg-zinc-50"><svg class="size-3.5"><use href="#i-user"/></svg>Assignee</button>
+            <button class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-500 hover:bg-zinc-50"><svg class="size-3.5"><use href="#i-tag"/></svg>Labels</button>
+            <button class="inline-flex h-7 items-center gap-1.5 rounded-md border border-zinc-200 px-2 text-xs text-zinc-500 hover:bg-zinc-50"><svg class="size-3.5"><use href="#i-calendar"/></svg>Due date</button>
+            <span class="callout -left-2 -top-2">2</span>
+          </div>
+          <div class="relative flex items-center gap-2 border-t border-zinc-100 px-4 py-3">
+            <label class="flex items-center gap-2 text-xs text-zinc-600"><span class="relative h-4 w-7 rounded-full bg-zinc-300"><span class="absolute left-0.5 top-0.5 size-3 rounded-full bg-white shadow"></span></span>Create more</label>
+            <button class="ml-auto h-8 rounded-md px-3 text-sm text-zinc-600 hover:bg-zinc-100">Cancel</button>
+            <button class="inline-flex h-8 items-center gap-2 rounded-md bg-indigo-600 px-3 text-sm font-medium text-white hover:bg-indigo-500">Create issue<kbd class="rounded bg-indigo-500 px-1 font-mono text-[10px]">⌘↵</kbd></button>
+            <span class="callout left-32 top-[18px]">3</span>
+          </div>
+        </div>
+      </div>
+      <ol class="mt-5 space-y-3 text-sm leading-relaxed text-zinc-600">
+        <li class="flex gap-2.5"><span class="num">1</span><span><b class="font-medium text-zinc-900">Validation.</b> Show the error under the field, and only after the user tries to submit. Use react-hook-form with a zod schema, and run the same schema on the server too.</span></li>
+        <li class="flex gap-2.5"><span class="num">2</span><span><b class="font-medium text-zinc-900">Smart defaults.</b> Opened from the + on the Todo column? Status starts as Todo. The pills are the same dropdowns used in the issue panel, so build them once.</span></li>
+        <li class="flex gap-2.5"><span class="num">3</span><span><b class="font-medium text-zinc-900">"Create more."</b> When it's on, the dialog stays open and the form clears after each create. It's a good test of whether you can reset form state properly.</span></li>
+      </ol>
+    </div>
+
+    <!-- 04 Command palette -->
+    <div>
+      <div class="mb-3 flex items-baseline gap-3"><span class="font-mono text-xs text-zinc-400">04</span><h2 class="text-lg font-semibold">Command palette</h2><span class="text-sm text-zinc-500">⌘K from anywhere</span></div>
+      <div class="relative flex h-[460px] items-start justify-center overflow-hidden rounded-xl border border-zinc-200 bg-zinc-300/60 p-6 pt-10 shadow-sm">
+        <div class="relative w-full max-w-[540px] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl">
+          <div class="flex items-center gap-2 border-b border-zinc-200 px-4">
+            <svg class="size-4 text-zinc-400"><use href="#i-search"/></svg>
+            <div class="flex h-12 items-center text-[15px] text-zinc-400"><span class="mr-px h-5 w-px animate-pulse bg-zinc-900"></span>Type a command or search…</div>
+            <kbd class="ml-auto rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">esc</kbd>
+          </div>
+          <div class="p-2 text-sm">
+            <p class="px-2 pb-1 pt-1 text-[11px] font-medium text-zinc-400">Recent issues</p>
+            <div class="relative flex items-center gap-3 rounded-md bg-zinc-100 px-2 py-2"><svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg><span class="font-mono text-[11px] text-zinc-400">LL-12</span><span class="text-zinc-900">Drag and drop cards between columns</span><svg class="ml-auto size-3.5 text-zinc-400"><use href="#i-enter"/></svg><span class="callout right-9 top-2">1</span></div>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-3.5 text-blue-500"><use href="#st-review"/></svg><span class="font-mono text-[11px] text-zinc-400">LL-14</span>Issue detail side panel</div>
+            <p class="px-2 pb-1 pt-3 text-[11px] font-medium text-zinc-400">Actions</p>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-4 text-zinc-500"><use href="#i-plus"/></svg>Create new issue<kbd class="ml-auto rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">C</kbd></div>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg>Change status…<kbd class="ml-auto rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">S</kbd></div>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-4 text-zinc-500"><use href="#i-user"/></svg>Assign to me<kbd class="ml-auto rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">I</kbd></div>
+            <p class="px-2 pb-1 pt-3 text-[11px] font-medium text-zinc-400">Navigation</p>
+            <div class="flex items-center gap-3 rounded-md px-2 py-2 text-zinc-700"><svg class="size-4 text-zinc-500"><use href="#i-inbox"/></svg>Go to inbox<span class="ml-auto flex gap-1"><kbd class="rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">G</kbd><kbd class="rounded border border-zinc-200 px-1.5 font-mono text-[10px] text-zinc-500">I</kbd></span></div>
+          </div>
+          <div class="relative flex items-center gap-4 border-t border-zinc-200 bg-zinc-50 px-4 py-2 text-[11px] text-zinc-500">
+            <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 bg-white px-1 font-mono">↑</kbd><kbd class="rounded border border-zinc-200 bg-white px-1 font-mono">↓</kbd>navigate</span>
+            <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 bg-white px-1 font-mono">↵</kbd>open</span>
+            <span class="flex items-center gap-1"><kbd class="rounded border border-zinc-200 bg-white px-1 font-mono">esc</kbd>close</span>
+            <span class="callout -top-2.5 left-40">2</span>
+          </div>
+        </div>
+      </div>
+      <ol class="mt-5 space-y-3 text-sm leading-relaxed text-zinc-600">
+        <li class="flex gap-2.5"><span class="num">1</span><span><b class="font-medium text-zinc-900">Highlighted row.</b> Arrow keys move the highlight and Enter runs it. Typing filters every group at once. Focus stays in the input the whole time.</span></li>
+        <li class="flex gap-2.5"><span class="num">2</span><span><b class="font-medium text-zinc-900">Global shortcut.</b> Listen for ⌘K once, in the root layout. shadcn's <code class="font-mono text-xs">Command</code> component (built on <code class="font-mono text-xs">cmdk</code>) handles the filtering and arrow keys for you. Use it, then read its source to see how it works.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============================================================ 05 STATES -->
+  <section id="states" class="mx-auto max-w-[1440px] px-6 pb-16">
+    <div class="mb-3 flex items-baseline gap-3"><span class="font-mono text-xs text-zinc-400">05</span><h2 class="text-lg font-semibold">States</h2><span class="text-sm text-zinc-500">this is what separates a demo from a real app</span></div>
+
+    <div class="space-y-10 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+
+      <!-- Card states -->
+      <div>
+        <h3 class="text-sm font-semibold">Card</h3>
+        <div class="mt-4 grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Default</p>
+            <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+              <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-17</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+              <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Validate the new-issue form with zod</p>
+              <div class="mt-3 flex items-center gap-1.5">
+                <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span>
+                <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+              </div>
+            </article>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Hover: grip handle appears</p>
+            <article class="relative rounded-lg border border-zinc-300 bg-white p-3 pl-5 shadow-sm">
+              <svg class="absolute left-0.5 top-1/2 size-4 -translate-y-1/2 text-zinc-300"><use href="#i-grip"/></svg>
+              <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-17</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+              <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Validate the new-issue form with zod</p>
+              <div class="mt-3 flex items-center gap-1.5">
+                <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span>
+                <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+              </div>
+            </article>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Keyboard focus (Tab / J / K)</p>
+            <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs ring-2 ring-indigo-500 ring-offset-2">
+              <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-17</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+              <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Validate the new-issue form with zod</p>
+              <div class="mt-3 flex items-center gap-1.5">
+                <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span>
+                <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+              </div>
+            </article>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Dragging</p>
+            <article class="rotate-[2.5deg] cursor-grabbing rounded-lg border border-indigo-200 bg-white p-3 shadow-2xl ring-1 ring-indigo-100">
+              <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-17</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+              <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Validate the new-issue form with zod</p>
+              <div class="mt-3 flex items-center gap-1.5">
+                <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span>
+                <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+              </div>
+            </article>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Saving (optimistic)</p>
+            <article class="rounded-lg border border-zinc-200 bg-white p-3">
+              <div class="opacity-60">
+                <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-17</span><span class="inline-flex items-center gap-1 text-[11px] font-medium text-zinc-500"><svg class="size-3 animate-spin"><use href="#i-loader"/></svg>Saving…</span></div>
+                <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Validate the new-issue form with zod</p>
+                <div class="mt-3 flex items-center gap-1.5">
+                  <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-medium"/></svg></span>
+                  <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Save failed: moved back</p>
+            <article class="rounded-lg border border-red-300 bg-red-50/50 p-3">
+              <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-17</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+              <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Validate the new-issue form with zod</p>
+              <p class="mt-2.5 flex items-center gap-1.5 border-t border-red-200 pt-2 text-[11px] text-red-700"><svg class="size-3.5"><use href="#i-alert"/></svg>Couldn't save. Moved back.<button class="ml-auto font-medium underline underline-offset-2">Retry</button></p>
+            </article>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Changed by a teammate (fades after ~3s)</p>
+            <article class="rounded-lg border border-indigo-300 bg-white p-3 shadow-sm ring-4 ring-indigo-100">
+              <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-17</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span></div>
+              <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Validate the new-issue form with zod</p>
+              <p class="mt-2.5 flex items-center gap-1.5 border-t border-zinc-100 pt-2 text-[11px] text-indigo-600"><span class="size-1.5 rounded-full bg-indigo-500"></span>Priya edited the title · just now</p>
+            </article>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Long title: clamp to 2 lines</p>
+            <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+              <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-31</span><span class="size-5 rounded-full border border-dashed border-zinc-300"></span></div>
+              <p class="mt-1 line-clamp-2 text-sm font-medium leading-snug text-zinc-800">Investigate why the board re-renders every card when a single WebSocket event arrives for one unrelated issue</p>
+              <div class="mt-3 flex flex-wrap items-center gap-1.5">
+                <span class="grid size-5 place-items-center rounded border border-zinc-200 text-zinc-600"><svg class="size-3"><use href="#pr-high"/></svg></span>
+                <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-red-500"></span>Bug</span>
+                <span class="inline-flex h-5 items-center gap-1 rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-600"><span class="size-1.5 rounded-full bg-sky-500"></span>Frontend</span>
+                <span class="inline-flex h-5 items-center rounded-full border border-zinc-200 px-1.5 text-[11px] text-zinc-500">+1</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- Column states -->
+      <div>
+        <h3 class="text-sm font-semibold">Column</h3>
+        <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Empty</p>
+            <section class="flex h-72 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+              <header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-blue-500"><use href="#st-review"/></svg><h4 class="text-sm font-medium">In Review</h4><span class="text-xs text-zinc-400">0</span></header>
+              <div class="mx-2 mb-2 grid flex-1 place-items-center rounded-lg border border-dashed border-zinc-300">
+                <div class="text-center">
+                  <p class="text-sm text-zinc-500">No issues</p>
+                  <button class="mt-2 inline-flex h-7 items-center gap-1 rounded-md px-2 text-xs font-medium text-zinc-600 hover:bg-zinc-200/60"><svg class="size-3.5"><use href="#i-plus"/></svg>Add issue</button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Loading (skeleton)</p>
+            <section class="flex h-72 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+              <header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg><h4 class="text-sm font-medium">Todo</h4><span class="h-3 w-4 animate-pulse rounded bg-zinc-200"></span></header>
+              <div class="flex flex-col gap-2 px-2">
+                <div class="space-y-2.5 rounded-lg bg-white p-3 ring-1 ring-zinc-200"><div class="h-2.5 w-10 animate-pulse rounded bg-zinc-200"></div><div class="h-3 w-full animate-pulse rounded bg-zinc-200"></div><div class="h-3 w-2/3 animate-pulse rounded bg-zinc-200"></div><div class="flex gap-1.5 pt-1"><div class="h-4 w-5 animate-pulse rounded bg-zinc-200"></div><div class="h-4 w-14 animate-pulse rounded-full bg-zinc-200"></div></div></div>
+                <div class="space-y-2.5 rounded-lg bg-white p-3 ring-1 ring-zinc-200"><div class="h-2.5 w-10 animate-pulse rounded bg-zinc-200"></div><div class="h-3 w-4/5 animate-pulse rounded bg-zinc-200"></div><div class="flex gap-1.5 pt-1"><div class="h-4 w-5 animate-pulse rounded bg-zinc-200"></div><div class="h-4 w-12 animate-pulse rounded-full bg-zinc-200"></div></div></div>
+              </div>
+            </section>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Drop target (card hovering over it)</p>
+            <section class="flex h-72 flex-col rounded-xl bg-indigo-50/70 ring-2 ring-indigo-300">
+              <header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg><h4 class="text-sm font-medium">In Progress</h4><span class="text-xs text-zinc-400">1</span></header>
+              <div class="flex flex-col gap-2 px-2">
+                <article class="rounded-lg border border-zinc-200 bg-white p-3 shadow-xs">
+                  <div class="flex items-center justify-between"><span class="font-mono text-[11px] text-zinc-400">LL-13</span><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span></div>
+                  <p class="mt-1 text-sm font-medium leading-snug text-zinc-800">Live sync across tabs</p>
+                </article>
+                <div class="h-20 rounded-lg border-2 border-dashed border-indigo-300 bg-white/60"></div>
+              </div>
+            </section>
+          </div>
+
+          <div>
+            <p class="mb-2 text-xs font-medium text-zinc-500">Failed to load</p>
+            <section class="flex h-72 flex-col rounded-xl bg-zinc-50 ring-1 ring-zinc-200/70">
+              <header class="flex items-center gap-2 px-3 py-2.5"><svg class="size-3.5 text-emerald-500"><use href="#st-done"/></svg><h4 class="text-sm font-medium">Done</h4><span class="text-xs text-zinc-400">–</span></header>
+              <div class="grid flex-1 place-items-center px-4 pb-4">
+                <div class="text-center">
+                  <svg class="mx-auto size-6 text-red-500"><use href="#i-alert"/></svg>
+                  <p class="mt-2 text-sm font-medium text-zinc-800">Couldn't load issues</p>
+                  <p class="mt-0.5 text-xs text-zinc-500">Check your connection and try again.</p>
+                  <button class="mt-3 h-7 rounded-md border border-zinc-300 bg-white px-3 text-xs font-medium text-zinc-700 hover:bg-zinc-50">Retry</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toasts -->
+      <div>
+        <h3 class="text-sm font-semibold">Toasts</h3>
+        <div class="mt-4 grid gap-4 lg:grid-cols-3">
+          <div class="flex items-start gap-3 rounded-lg border border-zinc-200 bg-white p-3 shadow-lg">
+            <svg class="mt-0.5 size-4 shrink-0 text-emerald-600"><use href="#i-check-circle"/></svg>
+            <div class="text-sm"><p class="font-medium">Created <span class="font-mono text-xs">LL-26</span></p><p class="mt-0.5 text-xs text-zinc-500">Added to Todo</p></div>
+            <button class="ml-auto text-xs font-medium text-indigo-600 hover:underline">View</button>
+          </div>
+          <div class="flex items-start gap-3 rounded-lg border border-zinc-200 bg-white p-3 shadow-lg">
+            <svg class="mt-0.5 size-4 shrink-0 text-zinc-600"><use href="#st-done"/></svg>
+            <div class="text-sm"><p class="font-medium">Moved <span class="font-mono text-xs">LL-18</span> to Done</p><p class="mt-0.5 text-xs text-zinc-500">just now</p></div>
+            <button class="ml-auto inline-flex items-center gap-1 text-xs font-medium text-zinc-700 hover:underline"><svg class="size-3.5"><use href="#i-undo"/></svg>Undo</button>
+          </div>
+          <div class="flex items-start gap-3 rounded-lg border border-red-200 bg-white p-3 shadow-lg">
+            <svg class="mt-0.5 size-4 shrink-0 text-red-600"><use href="#i-alert"/></svg>
+            <div class="text-sm"><p class="font-medium">Couldn't move <span class="font-mono text-xs">LL-12</span></p><p class="mt-0.5 text-xs text-zinc-500">It's back in In Progress.</p></div>
+            <button class="ml-auto h-7 rounded-md border border-zinc-300 px-2 text-xs font-medium text-zinc-700 hover:bg-zinc-50">Retry</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 06 TOKENS -->
+  <section id="tokens" class="mx-auto max-w-[1440px] px-6 pb-16">
+    <div class="mb-3 flex items-baseline gap-3"><span class="font-mono text-xs text-zinc-400">06</span><h2 class="text-lg font-semibold">Tokens</h2><span class="text-sm text-zinc-500">the Tailwind classes behind the look</span></div>
+    <div class="grid gap-6 rounded-xl border border-zinc-200 bg-white p-6 shadow-sm md:grid-cols-2 xl:grid-cols-4">
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Status</h3>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-zinc-400"><use href="#st-backlog"/></svg>Backlog<code class="ml-auto font-mono text-[11px] text-zinc-500">text-zinc-400</code></li>
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-zinc-500"><use href="#st-todo"/></svg>Todo<code class="ml-auto font-mono text-[11px] text-zinc-500">text-zinc-500</code></li>
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-amber-500"><use href="#st-progress"/></svg>In Progress<code class="ml-auto font-mono text-[11px] text-zinc-500">text-amber-500</code></li>
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-blue-500"><use href="#st-review"/></svg>In Review<code class="ml-auto font-mono text-[11px] text-zinc-500">text-blue-500</code></li>
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-emerald-500"><use href="#st-done"/></svg>Done<code class="ml-auto font-mono text-[11px] text-zinc-500">text-emerald-500</code></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Priority</h3>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-orange-500"><use href="#pr-urgent"/></svg>Urgent<code class="ml-auto font-mono text-[11px] text-zinc-500">text-orange-500</code></li>
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-zinc-600"><use href="#pr-high"/></svg>High<code class="ml-auto font-mono text-[11px] text-zinc-500">text-zinc-600</code></li>
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-zinc-600"><use href="#pr-medium"/></svg>Medium<code class="ml-auto font-mono text-[11px] text-zinc-500">text-zinc-600</code></li>
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-zinc-600"><use href="#pr-low"/></svg>Low<code class="ml-auto font-mono text-[11px] text-zinc-500">text-zinc-600</code></li>
+          <li class="flex items-center gap-2"><svg class="size-3.5 text-zinc-400"><use href="#pr-none"/></svg>No priority<code class="ml-auto font-mono text-[11px] text-zinc-500">text-zinc-400</code></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Labels &amp; people</h3>
+        <ul class="mt-3 space-y-2 text-sm">
+          <li class="flex items-center gap-2"><span class="size-2 rounded-full bg-violet-500"></span>Feature<code class="ml-auto font-mono text-[11px] text-zinc-500">bg-violet-500</code></li>
+          <li class="flex items-center gap-2"><span class="size-2 rounded-full bg-red-500"></span>Bug<code class="ml-auto font-mono text-[11px] text-zinc-500">bg-red-500</code></li>
+          <li class="flex items-center gap-2"><span class="size-2 rounded-full bg-sky-500"></span>Frontend<code class="ml-auto font-mono text-[11px] text-zinc-500">bg-sky-500</code></li>
+          <li class="flex items-center gap-2"><span class="size-2 rounded-full bg-teal-500"></span>Infra<code class="ml-auto font-mono text-[11px] text-zinc-500">bg-teal-500</code></li>
+          <li class="flex items-center gap-2"><span class="size-2 rounded-full bg-fuchsia-500"></span>AI<code class="ml-auto font-mono text-[11px] text-zinc-500">bg-fuchsia-500</code></li>
+          <li class="flex items-center gap-1.5 pt-1"><span class="grid size-5 place-items-center rounded-full bg-indigo-500 text-[9px] font-semibold text-white">AK</span><span class="grid size-5 place-items-center rounded-full bg-rose-500 text-[9px] font-semibold text-white">PR</span><span class="grid size-5 place-items-center rounded-full bg-emerald-600 text-[9px] font-semibold text-white">RJ</span><span class="grid size-5 place-items-center rounded-full bg-amber-500 text-[9px] font-semibold text-white">MS</span><span class="ml-1 text-xs text-zinc-500">pick colour from user id</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Type &amp; layout</h3>
+        <ul class="mt-3 space-y-2 text-xs text-zinc-600">
+          <li class="flex justify-between gap-3"><span>Card title</span><code class="font-mono text-[11px] text-zinc-500">text-sm font-medium</code></li>
+          <li class="flex justify-between gap-3"><span>Issue key</span><code class="font-mono text-[11px] text-zinc-500">font-mono text-[11px]</code></li>
+          <li class="flex justify-between gap-3"><span>Meta text</span><code class="font-mono text-[11px] text-zinc-500">text-xs text-zinc-500</code></li>
+          <li class="flex justify-between gap-3"><span>Card</span><code class="font-mono text-[11px] text-zinc-500">p-3 rounded-lg border</code></li>
+          <li class="flex justify-between gap-3"><span>Column</span><code class="font-mono text-[11px] text-zinc-500">w-64 rounded-xl bg-zinc-50</code></li>
+          <li class="flex justify-between gap-3"><span>Gaps</span><code class="font-mono text-[11px] text-zinc-500">cards gap-2 · columns gap-3</code></li>
+          <li class="flex justify-between gap-3"><span>Accent</span><code class="font-mono text-[11px] text-zinc-500">indigo-600</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 07 BEFORE YOU CODE -->
+  <section id="components" class="mx-auto max-w-[1440px] px-6 pb-24">
+    <div class="mb-3 flex items-baseline gap-3"><span class="font-mono text-xs text-zinc-400">07</span><h2 class="text-lg font-semibold">Before you code</h2></div>
+    <div class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <p class="text-sm text-zinc-700">Take 15 minutes with paper and answer these before you write any code:</p>
+      <ol class="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-zinc-700">
+        <li>Draw boxes around this board and name each one. Those boxes are your components. Which ones repeat?</li>
+        <li>Which components need <code class="font-mono text-xs">"use client"</code>? Why can't the board itself be a Server Component?</li>
+        <li>Once the issues are fetched, where do they live so the board, the issue panel and the command palette all see the same data?</li>
+        <li>When a WebSocket event says "LL-14 moved to In Review", what is the smallest thing you need to update?</li>
+      </ol>
+      <details class="group mt-5 rounded-lg border border-zinc-200 bg-zinc-50">
+        <summary class="cursor-pointer select-none px-4 py-3 text-sm font-medium text-zinc-700">Spoiler: one way to split it (open only after you've tried)</summary>
+        <pre class="overflow-x-auto border-t border-zinc-200 px-4 py-4 font-mono text-xs leading-relaxed text-zinc-700">
+board page            Server Component: reads searchParams, fetches issues, passes them down
+└─ AppShell           sidebar + header layout
+   ├─ Sidebar
+   ├─ BoardHeader     breadcrumb · PresenceAvatars · NewIssueButton
+   ├─ BoardToolbar    ViewToggle · FilterChips       (client: changes the URL)
+   └─ Board           (client) drag-and-drop context lives here
+      └─ Column       × 5, one per status
+         └─ IssueCard × n
+
+Also mounted once:
+   IssuePanel         its own route, shown over the board
+   NewIssueDialog · CommandPalette · Toaster
+
+Shared pieces built once, used everywhere:
+   StatusIcon · PriorityIcon · LabelChip · Avatar · PropertyDropdown
+
+Answers in short:
+   2. Board needs onClick, drag events and live updates, which only run in the browser.
+   3. In one client-side cache (TanStack Query), keyed by team + filters.
+   4. One issue's status in that cache. Not a refetch of the whole board.</pre>
+      </details>
+    </div>
+    <p class="mt-6 text-center text-xs text-zinc-400">Static mockup. The only interactive parts are the annotation toggle and the spoiler, and both are pure CSS/HTML.</p>
+  </section>
+
+</div>
+</body>
+</html>
