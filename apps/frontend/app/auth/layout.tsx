@@ -62,15 +62,7 @@ function layout({ children }: { children: React.ReactNode }) {
             <div className="flex-1 bg-black text-white">
                 <div className="m-14">
                     {/* header log */}
-                    <span className="font-semibold flex gap-2 text-lg">
-                        <Image
-                            src="/logo.svg"
-                            width={30}
-                            height={30}
-                            alt="logo"
-                        />
-                        Kanban-lite
-                    </span>
+                    <Logo />
                     {/* tagline section */}
                     <div className="my-25 flex flex-col gap-4">
                         <span className="text-4xl font-bold">
@@ -110,6 +102,15 @@ function layout({ children }: { children: React.ReactNode }) {
             </div>
             <div className="flex-1/5 text-black">{children}</div>
         </div>
+    );
+}
+
+export function Logo() {
+    return (
+        <span className="font-semibold flex gap-2 text-lg">
+            <Image src="/logo.svg" width={30} height={30} alt="logo" />
+            Kanban-lite
+        </span>
     );
 }
 
