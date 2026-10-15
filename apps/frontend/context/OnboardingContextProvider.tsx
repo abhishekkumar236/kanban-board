@@ -1,29 +1,19 @@
 "use client";
+
 import { createContext, useContext, useState } from "react";
 
 export interface OnboardingData {
     workspaceName: string;
     teamName: string;
-    teamKey: string;
-    boardName: string;
-    boardDescription: string;
+    projectName: string;
+    projectDescription: string;
     emails: string[];
 }
 
 interface OnboardingContextType {
-    data: OnboardingData;
-    updateData: (data: Partial<OnboardingData>) => void;
-    resetData: () => void;
+    onboardingData: OnboardingData;
+    updateState: (data: Partial<OnboardingData>) => void;
 }
-
-const initialData: OnboardingData = {
-    workspaceName: "",
-    teamName: "",
-    teamKey: "",
-    boardName: "",
-    boardDescription: "",
-    emails: [],
-};
 
 export const OnboardingContext = createContext<OnboardingContextType | null>(
     null,
@@ -34,25 +24,26 @@ export function OnboardingContextProvider({
 }: {
     children: React.ReactNode;
 }) {
-    const [data, setData] = useState<OnboardingData>(initialData);
+    const [onboardingData, setOnboardingData] = useState<OnboardingData>({
+        workspaceName: "",
+        teamName: "",
+        projectName: "",
+        projectDescription: "",
+        emails: [],
+    });
 
-    function updateData(newData: Partial<OnboardingData>) {
-        setData((prev) => ({
+    const updateState = (data: Partial<OnboardingData>) => {
+        setOnboardingData((prev) => ({
             ...prev,
-            ...newData,
+            ...data,
         }));
-    }
-
-    function resetData() {
-        setData(initialData);
-    }
+    };
 
     return (
         <OnboardingContext.Provider
             value={{
-                data,
-                updateData,
-                resetData,
+                onboardingData,
+                updateState,
             }}
         >
             {children}
@@ -60,14 +51,19 @@ export function OnboardingContextProvider({
     );
 }
 
-export function useOnboarding() {
+export function useOnboardingContext() {
     const context = useContext(OnboardingContext);
 
     if (!context) {
         throw new Error(
-            "useOnboarding must be used inside OnboardingContextProvider",
+            "Component must be wrapped with OnboardingContextProvider",
         );
     }
 
-    return context;
+    const { onboardingData, updateState } = context;
+
+    return {
+        onboardingData,
+        updateState,
+    };
 }

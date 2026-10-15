@@ -16,6 +16,9 @@ const inputElements: InputElements[] = [
 ];
 
 function Signup() {
+    const onClickHandler = () => {
+        console.log("button clicked");
+    };
     return (
         <div className="flex justify-center items-center h-screen">
             <div className="flex flex-col gap-1 w-80">
@@ -42,6 +45,7 @@ function Signup() {
                     <FormComponent
                         inputElements={inputElements}
                         buttonText="Log In"
+                        onClickHandler={onClickHandler}
                     />
                 </div>
 

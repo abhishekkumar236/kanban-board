@@ -1,7 +1,8 @@
+import OnboardingForm from "@/components/onboarding/OnboardingForm";
 import React from "react";
 
 function OnboardingPage() {
-    return <div>OnboardingPage</div>;
+    return <OnboardingForm />;
 }
 
 export default OnboardingPage;

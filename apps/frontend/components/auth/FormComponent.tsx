@@ -1,3 +1,5 @@
+import type { FormEventHandler } from "react";
+
 export interface InputElements {
     id: string;
     name: string;
@@ -7,8 +9,14 @@ export interface InputElements {
 export interface FormProps {
     inputElements: InputElements[];
     buttonText: string;
+    onClickHandler: () => void;
 }
-export function FormComponent({ inputElements, buttonText }: FormProps) {
+
+export function FormComponent({
+    inputElements,
+    buttonText,
+    onClickHandler,
+}: FormProps) {
     return (
         <>
             {inputElements.map((elem) => (
@@ -23,6 +31,7 @@ export function FormComponent({ inputElements, buttonText }: FormProps) {
             <button
                 type="submit"
                 className="bg-blue-700 text-white font-semibold text-sm py-2 rounded-md mt-2 cursor-pointer hover:bg-blue-600"
+                onClick={onClickHandler}
             >
                 {buttonText}
             </button>

@@ -1,12 +1,15 @@
-import Navbar from "@/components/onboarding/Navbar";
-import React from "react";
+import OnboardingNavbar from "@/components/onboarding/OnboardingNavbar";
+import { OnboardingContextProvider } from "@/context/OnboardingContextProvider";
 
-function layout({ children }: { children: React.ReactNode }) {
+function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="w-full h-screen relative">
-            <Navbar />
+        <div className="min-h-screen flex flex-col">
+            <OnboardingNavbar />
+            <OnboardingContextProvider>
+                <main className="flex-1">{children}</main>
+            </OnboardingContextProvider>
         </div>
     );
 }
 
-export default layout;
+export default Layout;
